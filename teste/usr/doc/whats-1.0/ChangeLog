@@ -1,0 +1,17 @@
+# ChangeLog
+All notable changes to this project will be documented in this file.
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+
+
+## [ 1.0 ] - 2021-10-31 #############################################
+
+### Added / Adicionado
+    - Add install.sh
+    - Add whats.png and whats.desktop in appdata.
+    - Add clean_cache in common.
+    - Add sources in src.
+    - Add scripts shell in utils.
+    - Add images in icon_status.
+###
+
+#####################################################################

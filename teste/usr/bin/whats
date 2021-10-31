@@ -1,0 +1,3 @@
+#!/bin/bash
+cd /usr/share/whats
+python3 whats.py
