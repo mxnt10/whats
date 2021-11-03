@@ -17,7 +17,7 @@ class AboutDialog(QDialog):
 
         # Properties window
         self.setWindowTitle('Sobre o Whats')
-        self.setFixedSize(400, 270)
+        self.setFixedSize(0, 0)
 
         # Define button OK
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)

@@ -3,6 +3,42 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.1 ] - 2021-11-02 #############################################
+
+### Added / Adicionado
+ - Added specifc menu for links:
+    - Open link in the browser.
+    - Copy link to clipboard'.
+ - Files and Sources:
+    - Added jsonTools.py in src.
+    - Added error.png in icon_status folder.
+ - Added status bar.
+ - Added funcionality for 'Preferencies' menu.
+###
+
+### Upgraded / Atualizado
+ - Updated install.sh
+ - Updated function for new messages detect.
+###
+
+### Changed / Modificado
+ - Changed link detection functions.
+ - Modify fixed size.
+###
+
+### Removed / Removido
+ - Removed menu 'External Browser'.
+ - Removed folder utils, unnecessary for open link in the browser.
+ - Removed unnecessary functions in sources and utils.
+###
+
+### Fixed / Corrigido
+ - Fixed link not open in the browser.
+###
+
+#####################################################################
+
+
 ## [ 1.0 ] - 2021-10-31 #############################################
 
 ### Added / Adicionado

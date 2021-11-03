@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 # Import modules
-from os import remove
+from time import sleep
 from sys import argv
 
+########################################################################################################################
+
 # Verify installed modules
+
 try:
     # noinspection PyUnresolvedReferences
     from PyQt5.QtGui import QIcon, QDesktopServices
@@ -16,6 +19,8 @@ try:
 except ImportError as msg:
     from logging import error
     exit(error('%s. Please install PyQt5 and QtWebEngine.', msg))
+
+########################################################################################################################
 
 # Verify installed QtWebEngine module
 try:
@@ -28,17 +33,24 @@ except ImportError:
     msg.show()
     exit(warn.exec_())
 
+########################################################################################################################
+
 # Import sources
 from about import AboutDialog
 from setting import SettingDialog
-from warning import LinkDialog
 from agent import user_agent
-from utils import set_icon, run_map_link, run_exit_map_link, set_link, name_map_ext
+from utils import set_icon
+import jsonTools as j
 
+########################################################################################################################
+
+# Global variables
+capture_url = None
+w_url = 'https://web.whatsapp.com/'
 
 # Class for application interface
-# noinspection PyUnresolvedReferences
 class MainWindow(QMainWindow):
+    # noinspection PyUnresolvedReferences
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -51,9 +63,12 @@ class MainWindow(QMainWindow):
         self.view = Browser()
         self.view.setPage(WhatsApp(self.view))
         self.view.titleChanged.connect(lambda: self.change_title(self.view.page().title()))
-        self.view.load(QUrl("https://web.whatsapp.com"))
-        # noinspection PyTypeChecker
+        self.view.page().linkHovered.connect(self.link_hovered)
+        self.view.load(QUrl(w_url))
         self.setCentralWidget(self.view)
+
+        if j.set_json('StatusBar') == 'True':
+            self.statusBar().show()  # Create status bar
 
         # Create system tray
         self.tray = QSystemTrayIcon()
@@ -67,7 +82,7 @@ class MainWindow(QMainWindow):
         # Add functions for options menu in system tray
         self.trayHide.triggered.connect(self.on_hide)
         self.trayShow.triggered.connect(self.on_show)
-        self.trayExit.triggered.connect(self.exit_app)
+        self.trayExit.triggered.connect(whats.quit)
 
         # Menu for system tray
         self.trayMenu = QMenu()
@@ -76,9 +91,26 @@ class MainWindow(QMainWindow):
         self.tray.setContextMenu(self.trayMenu)
         self.tray.show()
 
+        if j.set_json('StartUp') == 'Minimized':
+            self.on_hide()
+
+    # ### Functions ####################################################################################################
+
+    # Show links mouse hover and capture link
+    def link_hovered(self, link):
+        if j.set_json('StatusBar') == 'True':
+            self.statusBar().showMessage(link)
+        global capture_url
+        capture_url = link
+
     # Action for modify title
     def change_title(self, title):
-        if title == 'WhatsApp Web':
+        if title == 'web.whatsapp.com':
+            self.tray.setIcon(QIcon(set_icon('error')))
+            if j.set_json('AutoReload') == 'True':  # Auto reconnect
+                self.view.setUrl(QUrl(w_url))
+                sleep(1)
+        elif title == 'WhatsApp Web':
             self.tray.setIcon(QIcon(set_icon('warning')))
         elif title == 'WhatsApp':
             self.tray.setIcon(QIcon(set_icon()))
@@ -88,7 +120,6 @@ class MainWindow(QMainWindow):
     # Action case press hide
     def on_hide(self):
         self.hide()
-        run_exit_map_link()
 
         # change attributes of system tray menu
         self.trayMenu.clear()
@@ -101,34 +132,18 @@ class MainWindow(QMainWindow):
         self.setGeometry(self.geometry() + margin)
         self.show()
         self.setGeometry(self.geometry() - margin)
-        run_map_link()
 
         # change attributes of system tray menu
         self.trayMenu.clear()
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
 
-    # Close applications
-    @staticmethod
-    def exit_app():
-        run_exit_map_link()
-        whats.quit()
-
     # Capture event when close window
     def closeEvent(self, event):
         event.ignore()
         self.on_hide()
-        run_exit_map_link()
 
-    # Monitore minimize event
-    def changeEvent(self, event):
-        if event.type() == QEvent.WindowStateChange:
-            # noinspection PyTypeChecker
-            if self.windowState() & Qt.WindowMinimized:
-                run_exit_map_link()
-            else:
-                run_exit_map_link()
-                run_map_link()
+########################################################################################################################
 
 
 # Class for custom browser
@@ -136,18 +151,27 @@ class MainWindow(QMainWindow):
 class Browser(QWebEngineView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.save_url = None
+
+        # Necessary to map mouse event
+        QApplication.instance().installEventFilter(self)
+        self.setMouseTracking(True)
 
         # Define items for create custom menu
+        self.menuExternal = QAction('Open link in the browser')
+        self.menuLinkClip = QAction('Copy link to clipboard')
         self.menuReload = QAction('Reload')
-        self.menuExternal = QAction('External Link')
         self.menuConfig = QAction('Preferencies')
         self.menuAbout = QAction('About')
 
         # Add functions for options menu
-        self.menuReload.triggered.connect(self.reload)
-        self.menuExternal.triggered.connect(self.external_link)
-        # self.menuConfig.triggered.connect(self.show_settings)
+        self.menuExternal.triggered.connect(self.external_browser)
+        self.menuLinkClip.triggered.connect(lambda: clipboard.setText(self.save_url, mode=clipboard.Clipboard))
+        self.menuReload.triggered.connect(lambda: self.setUrl(QUrl(w_url)))  # Good reload method
+        self.menuConfig.triggered.connect(self.show_settings)
         self.menuAbout.triggered.connect(self.show_about)
+
+    # ### Functions ####################################################################################################
 
     # View settings window
     @staticmethod
@@ -162,27 +186,56 @@ class Browser(QWebEngineView):
         about.exec_()
 
     # Open select link in a external browser
-    @staticmethod
-    def external_link():
-        url = set_link()
-        if url is not None:
-            remove(name_map_ext())
-            QDesktopServices.openUrl(QUrl(url))
-        else:
-            no_link = LinkDialog()
-            no_link.exec_()
+    def external_browser(self):
+        global capture_url
+        if not capture_url:  # For press right button
+            capture_url = self.save_url
+
+        if capture_url:
+            # noinspection PyTypeChecker
+            QDesktopServices.openUrl(QUrl(capture_url))
+        capture_url = None
 
     # Create custom menu
     def contextMenuEvent(self, event):
         # noinspection PyAttributeOutsideInit
         self.menu = QMenu()
-        self.menu.addAction(self.menuReload)
-        self.menu.addSeparator()
-        self.menu.addAction(self.menuExternal)
-        self.menu.addSeparator()
-        self.menu.addAction(self.menuConfig)
-        self.menu.addAction(self.menuAbout)
+
+        global capture_url
+        if capture_url:  # Menu for link mouse hover
+            self.menu.addAction(self.menuExternal)
+            self.menu.addAction(self.menuLinkClip)
+        else:
+            self.menu.addAction(self.menuReload)
+            self.menu.addSeparator()
+            self.menu.addAction(self.menuConfig)
+            self.menu.addAction(self.menuAbout)
         self.menu.popup(event.globalPos())
+
+    # Execute event on click mouse
+    def mousePressEvent(self, event):
+        global capture_url
+        if event.button() == Qt.LeftButton:  # Left button is clicked
+            if capture_url:
+                self.external_browser()
+        if event.button() == Qt.RightButton:  # Right button is clicked
+            self.save_url = capture_url
+
+    # noinspection PyMethodOverriding
+    @staticmethod
+    def mouseMoveEvent(event):
+        if int(event.buttons()) == 1:  # Left button is pressed
+            print('select')
+
+    def eventFilter(self, obj, event):
+        if obj.parent() == self:
+            if event.type() == QEvent.MouseMove:
+                self.mouseMoveEvent(event)
+            elif event.type() == QEvent.MouseButtonPress:
+                self.mousePressEvent(event)
+        return False
+
+########################################################################################################################
 
 
 # Class for whatsapp web page
@@ -206,11 +259,18 @@ class WhatsApp(QWebEnginePage):
     def permission(self, frame, feature):
         self.setFeaturePermission(frame, feature, QWebEnginePage.PermissionGrantedByUser)
 
+########################################################################################################################
+
 
 # Start application
 if __name__ == '__main__':
-    run_map_link()
     whats = QApplication(argv)
+    clipboard = whats.clipboard()
     main = MainWindow()
-    main.showMaximized()
+    if j.set_json('StartUp') == 'Default':
+        main.show()
+    elif j.set_json('StartUp') == 'Maximized':
+        main.showMaximized()
     whats.exec_()
+
+########################################################################################################################

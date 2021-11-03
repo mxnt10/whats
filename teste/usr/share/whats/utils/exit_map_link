@@ -1,6 +1,0 @@
-#!/bin/bash 
-
-map_ext_link="$HOME"/.config/whats/mapped_link
-
-pkill -f map_link
-[ -f "$map_ext_link" ] && rm -r "$map_ext_link"

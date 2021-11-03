@@ -39,30 +39,3 @@ class WarnDialog(QDialog):
         layout.addWidget(self.comm)
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
-
-
-# Message for link not selected
-class LinkDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(LinkDialog, self).__init__(*args, **kwargs)
-
-        # Properties window
-        self.setWindowTitle('Warning')
-        self.setWindowIcon(QIcon(set_icon()))
-        self.setFixedSize(220, 100)
-
-        # Define message
-        self.msg = QLabel('\nSelect a link to use this option.\n')
-
-        # Define button OK
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
-        # noinspection PyUnresolvedReferences
-        self.buttonBox.accepted.connect(self.accept)
-
-        # Define layout
-        layout = QVBoxLayout()
-
-        # Create layout
-        layout.addWidget(self.msg)
-        layout.addWidget(self.buttonBox)
-        self.setLayout(layout)
