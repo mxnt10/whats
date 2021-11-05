@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.2 ] - 2021-11-04 #############################################
+
+### Added / Adicionado
+ - Added funcionality for options in settings.
+###
+
+### Changed / Modificado
+ - Changed title for about.
+###
+
+### Fixed / Corrigido
+ - Fixed startup minimized to tray.
+###
+
+#####################################################################
+
+
 ## [ 1.1 ] - 2021-11-02 #############################################
 
 ### Added / Adicionado

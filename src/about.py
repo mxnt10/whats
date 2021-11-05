@@ -10,13 +10,14 @@ from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 from utils import set_icon
 from version import __version__
 
+
 # Class for about dialog
 class AboutDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(AboutDialog, self).__init__(*args, **kwargs)
 
         # Properties window
-        self.setWindowTitle('Sobre o Whats')
+        self.setWindowTitle('About Whats')
         self.setFixedSize(0, 0)
 
         # Define button OK

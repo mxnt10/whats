@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 # Import modules
+from os.path import isfile
 from time import sleep
 from sys import argv
 
 ########################################################################################################################
 
 # Verify installed modules
-
 try:
     # noinspection PyUnresolvedReferences
     from PyQt5.QtGui import QIcon, QDesktopServices
@@ -39,20 +39,30 @@ except ImportError:
 from about import AboutDialog
 from setting import SettingDialog
 from agent import user_agent
-from utils import set_icon
+from utils import set_icon, desk
 import jsonTools as j
 
 ########################################################################################################################
 
+
 # Global variables
 capture_url = None
 w_url = 'https://web.whatsapp.com/'
+
+
+# Verify manual change in auto start
+if isfile(desk) and j.set_json('AutoStart') == 'False':
+    j.write_json('AutoStart', 'True')
+elif not isfile(desk) and j.set_json('AutoStart') == 'True':
+    j.write_json('AutoStart', 'False')
+
 
 # Class for application interface
 class MainWindow(QMainWindow):
     # noinspection PyUnresolvedReferences
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.start = 0
 
         # Properties window
         self.setWindowTitle('Whats - WhatsApp Desktop')
@@ -60,39 +70,46 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(800, 600)
 
         # View whatapp web page
-        self.view = Browser()
+        self.view = Browser(self)
         self.view.setPage(WhatsApp(self.view))
-        self.view.titleChanged.connect(lambda: self.change_title(self.view.page().title()))
         self.view.page().linkHovered.connect(self.link_hovered)
         self.view.load(QUrl(w_url))
         self.setCentralWidget(self.view)
 
+        # Create status bar
         if j.set_json('StatusBar') == 'True':
-            self.statusBar().show()  # Create status bar
+            self.statusBar().show()
 
-        # Create system tray
-        self.tray = QSystemTrayIcon()
-        self.tray.setIcon(QIcon(set_icon('warning')))
+        # Active icon on system tray
+        if j.set_json('TrayIcon') == 'True':
+            self.view.titleChanged.connect(lambda: self.change_title(self.view.page().title()))
 
-        # Items for create menu in system tray
-        self.trayHide = QAction('Hide', self)
-        self.trayShow = QAction('Show', self)
-        self.trayExit = QAction('Exit', self)
+            # Create system tray
+            self.tray = QSystemTrayIcon()
+            self.tray.setIcon(QIcon(set_icon('warning')))
 
-        # Add functions for options menu in system tray
-        self.trayHide.triggered.connect(self.on_hide)
-        self.trayShow.triggered.connect(self.on_show)
-        self.trayExit.triggered.connect(whats.quit)
+            # Items for create menu in system tray
+            self.trayHide = QAction('Hide', self)
+            self.trayShow = QAction('Show', self)
+            self.trayExit = QAction('Exit', self)
 
-        # Menu for system tray
-        self.trayMenu = QMenu()
-        self.trayMenu.addAction(self.trayHide)
-        self.trayMenu.addAction(self.trayExit)
-        self.tray.setContextMenu(self.trayMenu)
-        self.tray.show()
+            # Add functions for options menu in system tray
+            self.trayHide.triggered.connect(self.on_hide)
+            self.trayShow.triggered.connect(self.on_show)
+            self.trayExit.triggered.connect(whats.quit)
 
-        if j.set_json('StartUp') == 'Minimized':
-            self.on_hide()
+            # Menu for system tray
+            self.trayMenu = QMenu()
+            self.trayMenu.addAction(self.trayHide)
+            self.trayMenu.addAction(self.trayExit)
+            self.tray.setContextMenu(self.trayMenu)
+            self.tray.show()
+
+            # Options for show window por start minimized on tray
+            if j.set_json('StartUp') == 'Minimized':
+                self.trayMenu.clear()
+                self.trayMenu.addAction(self.trayShow)
+                self.trayMenu.addAction(self.trayExit)
 
     # ### Functions ####################################################################################################
 
@@ -113,7 +130,7 @@ class MainWindow(QMainWindow):
         elif title == 'WhatsApp Web':
             self.tray.setIcon(QIcon(set_icon('warning')))
         elif title == 'WhatsApp':
-            self.tray.setIcon(QIcon(set_icon()))
+            self.tray.setIcon(QIcon(set_icon('original')))
         else:
             self.tray.setIcon(QIcon(set_icon('withmsg')))  # Found messages
 
@@ -133,6 +150,11 @@ class MainWindow(QMainWindow):
         self.show()
         self.setGeometry(self.geometry() - margin)
 
+        # Show maximized when start minimized to tray
+        if self.start == 0 and j.set_json('StartUp') == 'Minimized':
+            self.showMaximized()
+            self.start = 1
+
         # change attributes of system tray menu
         self.trayMenu.clear()
         self.trayMenu.addAction(self.trayHide)
@@ -141,7 +163,13 @@ class MainWindow(QMainWindow):
     # Capture event when close window
     def closeEvent(self, event):
         event.ignore()
-        self.on_hide()
+
+        # Tray icon verification
+        if j.set_json('TrayIcon') == 'True':
+            self.on_hide()
+        else:
+            whats.quit()
+
 
 ########################################################################################################################
 
@@ -149,7 +177,10 @@ class MainWindow(QMainWindow):
 # Class for custom browser
 # noinspection PyUnresolvedReferences
 class Browser(QWebEngineView):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, win, *args, **kwargs):
+        self.main = win      # For modify status bar
+        self.menu = QMenu()  # For create context menu
+
         super().__init__(*args, **kwargs)
         self.save_url = None
 
@@ -174,9 +205,8 @@ class Browser(QWebEngineView):
     # ### Functions ####################################################################################################
 
     # View settings window
-    @staticmethod
-    def show_settings():
-        sett = SettingDialog()
+    def show_settings(self):
+        sett = SettingDialog(self.main)
         sett.exec_()
 
     # View about message
@@ -192,15 +222,11 @@ class Browser(QWebEngineView):
             capture_url = self.save_url
 
         if capture_url:
-            # noinspection PyTypeChecker
             QDesktopServices.openUrl(QUrl(capture_url))
         capture_url = None
 
     # Create custom menu
     def contextMenuEvent(self, event):
-        # noinspection PyAttributeOutsideInit
-        self.menu = QMenu()
-
         global capture_url
         if capture_url:  # Menu for link mouse hover
             self.menu.addAction(self.menuExternal)
@@ -221,9 +247,8 @@ class Browser(QWebEngineView):
         if event.button() == Qt.RightButton:  # Right button is clicked
             self.save_url = capture_url
 
-    # noinspection PyMethodOverriding
     @staticmethod
-    def mouseMoveEvent(event):
+    def mouseMoveEvent(event, **kwargs):
         if int(event.buttons()) == 1:  # Left button is pressed
             print('select')
 
@@ -234,6 +259,7 @@ class Browser(QWebEngineView):
             elif event.type() == QEvent.MouseButtonPress:
                 self.mousePressEvent(event)
         return False
+
 
 ########################################################################################################################
 
@@ -259,6 +285,7 @@ class WhatsApp(QWebEnginePage):
     def permission(self, frame, feature):
         self.setFeaturePermission(frame, feature, QWebEnginePage.PermissionGrantedByUser)
 
+
 ########################################################################################################################
 
 
@@ -271,6 +298,8 @@ if __name__ == '__main__':
         main.show()
     elif j.set_json('StartUp') == 'Maximized':
         main.showMaximized()
+    elif j.set_json('StartUp') == 'Minimized':
+        main.hide()
     whats.exec_()
 
 ########################################################################################################################

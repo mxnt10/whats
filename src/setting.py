@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget,
 
 # Import sources
 import jsonTools as j
+from utils import set_desktop
 
 ########################################################################################################################
 
@@ -15,7 +16,9 @@ import jsonTools as j
 # Class for settings dialog
 class SettingDialog(QDialog):
     # noinspection PyUnresolvedReferences
-    def __init__(self, *args, **kwargs):
+    def __init__(self, win, *args, **kwargs):
+        self.main = win  # For modify status bar
+
         super(SettingDialog, self).__init__(*args, **kwargs)
 
         # Properties window
@@ -25,7 +28,7 @@ class SettingDialog(QDialog):
         # Widgets for add tabs
         tabWidget = QTabWidget()
         tabWidget.addTab(GeneralTab(), 'General')
-        tabWidget.addTab(CustomTab(), 'Custom')
+        tabWidget.addTab(CustomTab(self.main), 'Custom')
         tabWidget.addTab(NetworkTab(), 'Network')
 
         # Define button OK
@@ -44,6 +47,7 @@ class SettingDialog(QDialog):
             # noinspection PyTypeChecker
             if self.windowState() & Qt.WindowMinimized:
                 self.showMaximized()
+
 
 ########################################################################################################################
 
@@ -122,6 +126,9 @@ class GeneralTab(QWidget):
             j.write_json('AutoStart', 'True')
         else:
             j.write_json('AutoStart', 'False')
+        st = set_desktop()
+        if not st:
+            self.autoStart.setChecked(False)
 
     # Set options for system tray in settings.json
     def setTrayIcon(self):
@@ -148,7 +155,9 @@ class GeneralTab(QWidget):
 
 # Class for custom configurations
 class CustomTab(QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, win, *args, **kwargs):
+        self.main = win  # For modify status bar
+
         super(CustomTab, self).__init__(*args, **kwargs)
         customInterface = QGroupBox('Interface')
 
@@ -181,8 +190,11 @@ class CustomTab(QWidget):
     def setStatusBar(self):
         if self.showStatus.isChecked():
             j.write_json('StatusBar', 'True')
+            self.main.statusBar().show()
         else:
             j.write_json('StatusBar', 'False')
+            self.main.statusBar().hide()
+
 
 ########################################################################################################################
 
@@ -216,3 +228,5 @@ class NetworkTab(QWidget):
             j.write_json('AutoReload', 'True')
         else:
             j.write_json('AutoReload', 'False')
+
+########################################################################################################################
