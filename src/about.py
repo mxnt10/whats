@@ -27,7 +27,7 @@ class AboutDialog(QDialog):
 
         # Define layout and text title
         layout = QVBoxLayout()
-        title = QLabel('Whats - WhatsApp Desktop')
+        title = QLabel('  Whats - WhatsApp Desktop  ')
         font = title.font()
         font.setPointSize(20)
         title.setFont(font)

@@ -11,7 +11,7 @@ from sys import argv
 # Verify installed modules
 try:
     # noinspection PyUnresolvedReferences
-    from PyQt5.QtGui import QIcon, QDesktopServices
+    from PyQt5.QtGui import QIcon, QDesktopServices, QFont
     # noinspection PyUnresolvedReferences
     from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent
     # noinspection PyUnresolvedReferences
@@ -25,7 +25,7 @@ except ImportError as msg:
 # Verify installed QtWebEngine module
 try:
     # noinspection PyUnresolvedReferences
-    from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem
+    from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings
 except ImportError:
     from warning import WarnDialog
     warn = QApplication(argv)
@@ -75,6 +75,22 @@ class MainWindow(QMainWindow):
         self.view.page().linkHovered.connect(self.link_hovered)
         self.view.load(QUrl(w_url))
         self.setCentralWidget(self.view)
+
+        # Define first value for size font
+        if j.set_json('SizeFont') == 'Default':
+            j.write_json('SizeFont', float(str(self.font().key()).split(',')[1]))
+
+        # Settings for active options
+        self.view.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+        self.view.settings().setAttribute(QWebEngineSettings.AutoLoadImages, True)
+        self.view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
+        self.view.settings().globalSettings().setFontSize(QWebEngineSettings.MinimumFontSize,
+                                                          int(j.set_json('SizeFont')))
+
+        # Define opacity options
+        if j.set_json('Opacity') != 100:
+            str_num = '0.' + str(j.set_json('Opacity'))
+            self.setWindowOpacity(float(str_num))
 
         # Create status bar
         if j.set_json('StatusBar') == 'True':
@@ -247,16 +263,9 @@ class Browser(QWebEngineView):
         if event.button() == Qt.RightButton:  # Right button is clicked
             self.save_url = capture_url
 
-    @staticmethod
-    def mouseMoveEvent(event, **kwargs):
-        if int(event.buttons()) == 1:  # Left button is pressed
-            print('select')
-
     def eventFilter(self, obj, event):
         if obj.parent() == self:
-            if event.type() == QEvent.MouseMove:
-                self.mouseMoveEvent(event)
-            elif event.type() == QEvent.MouseButtonPress:
+            if event.type() == QEvent.MouseButtonPress:
                 self.mousePressEvent(event)
         return False
 

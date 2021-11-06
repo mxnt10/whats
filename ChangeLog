@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.3 ] - 2021-11-06 #############################################
+
+### Added / Adicionado
+ - Added funcionality for window transparency.
+ - Added settings for size font.
+ - Enabled settings for enable javascript, plugins and
+   autoload images.
+###
+
+### Changed / Modificado
+ - Modify Opacity to int in settings.json.
+###
+
+### Fixed / Corrigido
+ - Ajust items in settings window.
+###
+
+#####################################################################
+
+
 ## [ 1.2 ] - 2021-11-04 #############################################
 
 ### Added / Adicionado
@@ -44,13 +64,14 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ###
 
 ### Removed / Removido
- - Removed menu 'External Browser'.
+ - Code:
+    - Removed menu 'External Browser'.
+    - Removed unnecessary functions in sources and utils.
  - Removed folder utils, unnecessary for open link in the browser.
- - Removed unnecessary functions in sources and utils.
 ###
 
 ### Fixed / Corrigido
- - Fixed link not open in the browser.
+ - Fixed link not open in a external browser.
 ###
 
 #####################################################################
@@ -59,12 +80,12 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ## [ 1.0 ] - 2021-10-31 #############################################
 
 ### Added / Adicionado
-    - Add install.sh
-    - Add whats.png and whats.desktop in appdata.
-    - Add clean_cache in common.
-    - Add sources in src.
-    - Add scripts shell in utils.
-    - Add images in icon_status.
+ - Add install.sh
+ - Add whats.png and whats.desktop in appdata.
+ - Add clean_cache in common.
+ - Add sources in src.
+ - Add scripts shell in utils.
+ - Add images in icon_status.
 ###
 
 #####################################################################

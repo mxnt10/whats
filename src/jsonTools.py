@@ -15,7 +15,8 @@ default_js = {
   "TrayIcon": "True",
   "StartUp": "Default",
   "StatusBar": "False",
-  "Opacity": "100",
+  "Opacity": 100,
+  "SizeFont": "Default",
   "AutoReload": "False"
 }
 

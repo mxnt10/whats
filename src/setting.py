@@ -3,8 +3,9 @@
 
 # Import modules
 from PyQt5.QtCore import QEvent, Qt
+from PyQt5.QtWebEngineWidgets import QWebEngineSettings
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget, QWidget, QGroupBox, QCheckBox,
-                             QRadioButton, QSlider, QGridLayout, QLabel)
+                             QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy)
 
 # Import sources
 import jsonTools as j
@@ -120,6 +121,8 @@ class GeneralTab(QWidget):
         layout.addWidget(startUp)
         self.setLayout(layout)
 
+    # ### Functions ####################################################################################################
+
     # Set options for auto start in settings.json
     def setAutoStart(self):
         if self.autoStart.isChecked():
@@ -155,36 +158,60 @@ class GeneralTab(QWidget):
 
 # Class for custom configurations
 class CustomTab(QWidget):
+    # noinspection PyUnresolvedReferences
     def __init__(self, win, *args, **kwargs):
         self.main = win  # For modify status bar
 
         super(CustomTab, self).__init__(*args, **kwargs)
         customInterface = QGroupBox('Interface')
+        customFont = QGroupBox('Font')
+
+        # Options for set font
+        self.font = QLabel('Window Size Font: ' + str(j.set_json('SizeFont')))
+        self.fontSlider = QSlider(Qt.Horizontal)
+        self.fontSlider.setRange(8, 18)
+        self.fontSlider.setValue(j.set_json('SizeFont'))
+        self.fontSlider.setTickPosition(QSlider.TicksAbove)
+        self.fontSlider.setTickInterval(1)
 
         # Options for Custom interface
         self.showStatus = QCheckBox('Show status bar')
-        frameLabel = QLabel('Opacity:')
-        frameSlider = QSlider(Qt.Horizontal)
-        frameSlider.setRange(20, 100)
-        frameSlider.setValue(int(j.set_json('Opacity')))
+        self.frameLabel = QLabel('Opacity:')
+        self.frameSlider = QSlider(Qt.Horizontal)
+        self.frameSlider.setRange(20, 100)
+        self.frameSlider.setValue(j.set_json('Opacity'))
+        self.frameSlider.setTickPosition(QSlider.TicksAbove)
+        self.frameSlider.setTickInterval(5)
 
         if j.set_json('StatusBar') == 'True':
             self.showStatus.setChecked(True)
 
-        # noinspection PyUnresolvedReferences
+        # Functions for modify values
         self.showStatus.toggled.connect(self.setStatusBar)
+        self.frameSlider.valueChanged.connect(self.setOpacity)
+        self.fontSlider.valueChanged.connect(self.setSizeFont)
 
         # Create grid for a good organization
         customLayout = QGridLayout()
         customLayout.addWidget(self.showStatus, 0, 0, 1, 2)
-        customLayout.addWidget(frameLabel, 1, 0)
-        customLayout.addWidget(frameSlider, 1, 1)
+        customLayout.addWidget(QLabel(''), 1, 0, 1, 2)
+        customLayout.addWidget(self.frameLabel, 2, 0)
+        customLayout.addWidget(self.frameSlider, 2, 1)
         customInterface.setLayout(customLayout)
+
+        # Create layout for font
+        fontLayout = QVBoxLayout()
+        fontLayout.addWidget(self.font)
+        fontLayout.addWidget(self.fontSlider)
+        customFont.setLayout(fontLayout)
 
         # Create layout for tab
         layout = QVBoxLayout()
         layout.addWidget(customInterface)
+        layout.addWidget(customFont)
         self.setLayout(layout)
+
+    # ### Functions ####################################################################################################
 
     # Set options for status bar in settings.json
     def setStatusBar(self):
@@ -195,6 +222,21 @@ class CustomTab(QWidget):
             j.write_json('StatusBar', 'False')
             self.main.statusBar().hide()
 
+    # Set value for opacity in settings.json
+    def setOpacity(self):
+        j.write_json('Opacity', self.frameSlider.value())
+        if j.set_json('Opacity') == 100:
+            self.main.setWindowOpacity(1)
+        else:
+            str_num = '0.' + str(self.frameSlider.value())
+            self.main.setWindowOpacity(float(str_num))
+
+    # Modify size font and write in settings.json
+    def setSizeFont(self):
+        self.font.setText('Window Size Font: ' + str(self.fontSlider.value()))
+        j.write_json('SizeFont', self.fontSlider.value())
+        self.main.view.settings().globalSettings().setFontSize(QWebEngineSettings.MinimumFontSize,
+                                                               int(j.set_json('SizeFont')))
 
 ########################################################################################################################
 
@@ -221,6 +263,7 @@ class NetworkTab(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(connect)
         self.setLayout(layout)
+        self.layout().addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Add a vertical spacer.
 
     # Set options for auto reload in settings.json
     def setAutoReload(self):
