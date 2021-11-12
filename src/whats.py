@@ -244,6 +244,7 @@ class Browser(QWebEngineView):
     # Create custom menu
     def contextMenuEvent(self, event):
         global capture_url
+        self.menu.clear()
         if capture_url:  # Menu for link mouse hover
             self.menu.addAction(self.menuExternal)
             self.menu.addAction(self.menuLinkClip)
