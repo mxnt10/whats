@@ -22,12 +22,11 @@ class AboutDialog(QDialog):
 
         # Define button OK
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
-        # noinspection PyUnresolvedReferences
         self.buttonBox.accepted.connect(self.accept)
 
         # Define layout and text title
         layout = QVBoxLayout()
-        title = QLabel('  Whats - WhatsApp Desktop  ')
+        title = QLabel('Whats - WhatsApp Desktop')
         font = title.font()
         font.setPointSize(20)
         title.setFont(font)
@@ -54,6 +53,5 @@ class AboutDialog(QDialog):
     # Capture event on minimize
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
-            # noinspection PyTypeChecker
             if self.windowState() & Qt.WindowMinimized:
                 self.showMaximized()
