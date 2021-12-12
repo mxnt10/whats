@@ -9,18 +9,18 @@ from shutil import rmtree
 # Link for userAgent:
 # http://httpbin.org/user-agent
 
-# Outdated browser
-log_folder = expanduser('~/.local/share/whats.py/QtWebEngine/Default/Service Worker/')
+def prevent():
+    # Outdated browser
+    log_folder = expanduser('~/.local/share/whats.py/QtWebEngine/Default/Service Worker/')
 
-# noinspection PyBroadException
-try:
-    if isdir(log_folder):
-        rmtree(log_folder)
+    try:
+        if isdir(log_folder):
+            rmtree(log_folder)
 
-    makedirs(log_folder)
-    chmod(log_folder, 0o444)
-except Exception:
-    pass
+        makedirs(log_folder)
+        chmod(log_folder, 0o444)
+    except Exception as msg:
+        print(msg)
 
 
 # Define userAgent

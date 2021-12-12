@@ -38,9 +38,9 @@ except ImportError:
 # Import sources
 from about import AboutDialog
 from setting import SettingDialog
-from agent import user_agent
+from agent import user_agent, prevent
 from utils import set_icon, desk
-import jsonTools as j
+from jsonTools import checkSettings, set_json, write_json
 
 ########################################################################################################################
 
@@ -51,21 +51,19 @@ w_url = 'https://web.whatsapp.com/'
 
 
 # Verify manual change in auto start
-if isfile(desk) and j.set_json('AutoStart') == 'False':
-    j.write_json('AutoStart', 'True')
-elif not isfile(desk) and j.set_json('AutoStart') == 'True':
-    j.write_json('AutoStart', 'False')
+if isfile(desk) and set_json('AutoStart') == 'False':
+    write_json('AutoStart', 'True')
+elif not isfile(desk) and set_json('AutoStart') == 'True':
+    write_json('AutoStart', 'False')
 
 
 # Class for application interface
 class MainWindow(QMainWindow):
-    # noinspection PyUnresolvedReferences
     def __init__(self):
         super(MainWindow, self).__init__()
         self.start = 0
 
         # Properties window
-        self.setWindowTitle('Whats - WhatsApp Desktop')
         self.setWindowIcon(QIcon(set_icon()))
         self.setMinimumSize(800, 600)
 
@@ -77,27 +75,27 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.view)
 
         # Define first value for size font
-        if j.set_json('SizeFont') == 'Default':
-            j.write_json('SizeFont', float(str(self.font().key()).split(',')[1]))
+        if set_json('SizeFont') == 'Default':
+            write_json('SizeFont', float(str(self.font().key()).split(',')[1]))
 
         # Settings for active options
         self.view.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
         self.view.settings().setAttribute(QWebEngineSettings.AutoLoadImages, True)
         self.view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
         self.view.settings().globalSettings().setFontSize(QWebEngineSettings.MinimumFontSize,
-                                                          int(j.set_json('SizeFont')))
+                                                          int(set_json('SizeFont')))
 
         # Define opacity options
-        if j.set_json('Opacity') != 100:
-            str_num = '0.' + str(j.set_json('Opacity'))
+        if set_json('Opacity') != 100:
+            str_num = '0.' + str(set_json('Opacity'))
             self.setWindowOpacity(float(str_num))
 
         # Create status bar
-        if j.set_json('StatusBar') == 'True':
+        if set_json('StatusBar') == 'True':
             self.statusBar().show()
 
         # Active icon on system tray
-        if j.set_json('TrayIcon') == 'True':
+        if set_json('TrayIcon') == 'True':
             self.view.titleChanged.connect(lambda: self.change_title(self.view.page().title()))
 
             # Create system tray
@@ -122,7 +120,7 @@ class MainWindow(QMainWindow):
             self.tray.show()
 
             # Options for show window por start minimized on tray
-            if j.set_json('StartUp') == 'Minimized':
+            if set_json('StartUp') == 'Minimized':
                 self.trayMenu.clear()
                 self.trayMenu.addAction(self.trayShow)
                 self.trayMenu.addAction(self.trayExit)
@@ -131,7 +129,7 @@ class MainWindow(QMainWindow):
 
     # Show links mouse hover and capture link
     def link_hovered(self, link):
-        if j.set_json('StatusBar') == 'True':
+        if set_json('StatusBar') == 'True':
             self.statusBar().showMessage(link)
         global capture_url
         capture_url = link
@@ -140,7 +138,7 @@ class MainWindow(QMainWindow):
     def change_title(self, title):
         if title == 'web.whatsapp.com':
             self.tray.setIcon(QIcon(set_icon('error')))
-            if j.set_json('AutoReload') == 'True':  # Auto reconnect
+            if set_json('AutoReload') == 'True':  # Auto reconnect
                 self.view.setUrl(QUrl(w_url))
                 sleep(1)
         elif title == 'WhatsApp Web':
@@ -167,7 +165,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(self.geometry() - margin)
 
         # Show maximized when start minimized to tray
-        if self.start == 0 and j.set_json('StartUp') == 'Minimized':
+        if self.start == 0 and set_json('StartUp') == 'Minimized':
             self.showMaximized()
             self.start = 1
 
@@ -181,7 +179,7 @@ class MainWindow(QMainWindow):
         event.ignore()
 
         # Tray icon verification
-        if j.set_json('TrayIcon') == 'True':
+        if set_json('TrayIcon') == 'True':
             self.on_hide()
         else:
             whats.quit()
@@ -191,7 +189,6 @@ class MainWindow(QMainWindow):
 
 
 # Class for custom browser
-# noinspection PyUnresolvedReferences
 class Browser(QWebEngineView):
     def __init__(self, win, *args, **kwargs):
         self.main = win      # For modify status bar
@@ -231,7 +228,7 @@ class Browser(QWebEngineView):
         about = AboutDialog()
         about.exec_()
 
-    # Open select link in a external browser
+    # Open select link in an external browser
     def external_browser(self):
         global capture_url
         if not capture_url:  # For press right button
@@ -301,14 +298,17 @@ class WhatsApp(QWebEnginePage):
 
 # Start application
 if __name__ == '__main__':
+    checkSettings()
+    prevent()
     whats = QApplication(argv)
+    whats.setApplicationName('Whats - WhatsApp Desktop')
     clipboard = whats.clipboard()
     main = MainWindow()
-    if j.set_json('StartUp') == 'Default':
+    if set_json('StartUp') == 'Default':
         main.show()
-    elif j.set_json('StartUp') == 'Maximized':
+    elif set_json('StartUp') == 'Maximized':
         main.showMaximized()
-    elif j.set_json('StartUp') == 'Minimized':
+    elif set_json('StartUp') == 'Minimized':
         main.hide()
     whats.exec_()
 

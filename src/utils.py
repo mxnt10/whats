@@ -8,7 +8,7 @@ from os.path import expanduser, isfile
 from shutil import copy
 
 # Import sources
-import jsonTools as j
+from jsonTools import set_json, write_json
 
 # Variables for define locals for autostart configuration
 orig = '/usr/share/applications/whats.desktop'
@@ -42,14 +42,14 @@ def set_icon(entry_icon=None):
 # verify if exist the file whats.desktop in auto start folder
 def set_desktop():
     try:
-        if not isfile(desk) and j.set_json('AutoStart') == 'True':
+        if not isfile(desk) and set_json('AutoStart') == 'True':
             with open(orig):
                 copy(orig, dest)
-        elif isfile(desk) and j.set_json('AutoStart') == 'False':
+        elif isfile(desk) and set_json('AutoStart') == 'False':
             remove(desk)
         return True
 
     except Exception as msg:
         error('\033[31m %s \033[m', msg)
-        j.write_json('AutoStart', 'False')
+        write_json('AutoStart', 'False')
         return False

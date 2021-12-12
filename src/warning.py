@@ -28,7 +28,6 @@ class WarnDialog(QDialog):
 
         # Define button OK
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
-        # noinspection PyUnresolvedReferences
         self.buttonBox.accepted.connect(self.accept)
 
         # Define layout

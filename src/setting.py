@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget,
                              QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy)
 
 # Import sources
-import jsonTools as j
+from jsonTools import set_json, write_json
 from utils import set_desktop
 
 ########################################################################################################################
@@ -16,7 +16,6 @@ from utils import set_desktop
 
 # Class for settings dialog
 class SettingDialog(QDialog):
-    # noinspection PyUnresolvedReferences
     def __init__(self, win, *args, **kwargs):
         self.main = win  # For modify status bar
 
@@ -45,7 +44,6 @@ class SettingDialog(QDialog):
     # Capture event on minimize
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
-            # noinspection PyTypeChecker
             if self.windowState() & Qt.WindowMinimized:
                 self.showMaximized()
 
@@ -55,7 +53,6 @@ class SettingDialog(QDialog):
 
 # Class for general configurations
 class GeneralTab(QWidget):
-    # noinspection PyUnresolvedReferences
     def __init__(self, *args, **kwargs):
         super(GeneralTab, self).__init__(*args, **kwargs)
 
@@ -68,11 +65,11 @@ class GeneralTab(QWidget):
         self.showTray = QCheckBox('Show tray icon')
 
         # Define checkbox for auto start
-        if j.set_json('AutoStart') == 'True':
+        if set_json('AutoStart') == 'True':
             self.autoStart.setChecked(True)
 
         # Define checkbox for tray icon
-        if j.set_json('TrayIcon') == 'True':
+        if set_json('TrayIcon') == 'True':
             self.showTray.setChecked(True)
 
         # Messages for raio buttons
@@ -86,11 +83,11 @@ class GeneralTab(QWidget):
         self.showMinimize = QRadioButton(self.msg_min)
 
         # Define selection for startup
-        if j.set_json('StartUp') == 'Default':
+        if set_json('StartUp') == 'Default':
             self.showDefault.setChecked(True)
-        elif j.set_json('StartUp') == 'Maximized':
+        elif set_json('StartUp') == 'Maximized':
             self.showMaximize.setChecked(True)
-        elif j.set_json('StartUp') == 'Minimized':
+        elif set_json('StartUp') == 'Minimized':
             self.showMinimize.setChecked(True)
 
         # Instructions for execute action with press a checkbox
@@ -126,9 +123,9 @@ class GeneralTab(QWidget):
     # Set options for auto start in settings.json
     def setAutoStart(self):
         if self.autoStart.isChecked():
-            j.write_json('AutoStart', 'True')
+            write_json('AutoStart', 'True')
         else:
-            j.write_json('AutoStart', 'False')
+            write_json('AutoStart', 'False')
         st = set_desktop()
         if not st:
             self.autoStart.setChecked(False)
@@ -136,20 +133,20 @@ class GeneralTab(QWidget):
     # Set options for system tray in settings.json
     def setTrayIcon(self):
         if self.showTray.isChecked():
-            j.write_json('TrayIcon', 'True')
+            write_json('TrayIcon', 'True')
         else:
-            j.write_json('TrayIcon', 'False')
+            write_json('TrayIcon', 'False')
             if self.showMinimize.isChecked():
                 self.showDefault.setChecked(True)
 
     # Set options for startup in settings.json
     def radioButtonState(self, button):
         if button.text() == self.msg_show and self.showDefault.isChecked():
-            j.write_json('StartUp', 'Default')
+            write_json('StartUp', 'Default')
         if button.text() == self.msg_max and self.showMaximize.isChecked():
-            j.write_json('StartUp', 'Maximized')
+            write_json('StartUp', 'Maximized')
         if button.text() == self.msg_min and self.showMinimize.isChecked():
-            j.write_json('StartUp', 'Minimized')
+            write_json('StartUp', 'Minimized')
             self.showTray.setChecked(True)
 
 
@@ -158,7 +155,6 @@ class GeneralTab(QWidget):
 
 # Class for custom configurations
 class CustomTab(QWidget):
-    # noinspection PyUnresolvedReferences
     def __init__(self, win, *args, **kwargs):
         self.main = win  # For modify status bar
 
@@ -167,10 +163,10 @@ class CustomTab(QWidget):
         customFont = QGroupBox('Font')
 
         # Options for set font
-        self.font = QLabel('Window Size Font: ' + str(j.set_json('SizeFont')))
+        self.font = QLabel('Window Size Font: ' + str(set_json('SizeFont')))
         self.fontSlider = QSlider(Qt.Horizontal)
         self.fontSlider.setRange(8, 18)
-        self.fontSlider.setValue(j.set_json('SizeFont'))
+        self.fontSlider.setValue(set_json('SizeFont'))
         self.fontSlider.setTickPosition(QSlider.TicksAbove)
         self.fontSlider.setTickInterval(1)
 
@@ -179,11 +175,11 @@ class CustomTab(QWidget):
         self.frameLabel = QLabel('Opacity:')
         self.frameSlider = QSlider(Qt.Horizontal)
         self.frameSlider.setRange(20, 100)
-        self.frameSlider.setValue(j.set_json('Opacity'))
+        self.frameSlider.setValue(set_json('Opacity'))
         self.frameSlider.setTickPosition(QSlider.TicksAbove)
         self.frameSlider.setTickInterval(5)
 
-        if j.set_json('StatusBar') == 'True':
+        if set_json('StatusBar') == 'True':
             self.showStatus.setChecked(True)
 
         # Functions for modify values
@@ -216,16 +212,16 @@ class CustomTab(QWidget):
     # Set options for status bar in settings.json
     def setStatusBar(self):
         if self.showStatus.isChecked():
-            j.write_json('StatusBar', 'True')
+            write_json('StatusBar', 'True')
             self.main.statusBar().show()
         else:
-            j.write_json('StatusBar', 'False')
+            write_json('StatusBar', 'False')
             self.main.statusBar().hide()
 
     # Set value for opacity in settings.json
     def setOpacity(self):
-        j.write_json('Opacity', self.frameSlider.value())
-        if j.set_json('Opacity') == 100:
+        write_json('Opacity', self.frameSlider.value())
+        if set_json('Opacity') == 100:
             self.main.setWindowOpacity(1)
         else:
             str_num = '0.' + str(self.frameSlider.value())
@@ -234,9 +230,9 @@ class CustomTab(QWidget):
     # Modify size font and write in settings.json
     def setSizeFont(self):
         self.font.setText('Window Size Font: ' + str(self.fontSlider.value()))
-        j.write_json('SizeFont', self.fontSlider.value())
+        write_json('SizeFont', self.fontSlider.value())
         self.main.view.settings().globalSettings().setFontSize(QWebEngineSettings.MinimumFontSize,
-                                                               int(j.set_json('SizeFont')))
+                                                               int(set_json('SizeFont')))
 
 ########################################################################################################################
 
@@ -247,17 +243,15 @@ class NetworkTab(QWidget):
         super(NetworkTab, self).__init__(*args, **kwargs)
         connect = QGroupBox('Connection')
         self.autoReload = QCheckBox('Reload automatically in case of connection fail')
+        self.autoReload.toggled.connect(self.setAutoReload)
 
-        if j.set_json('AutoReload') == 'True':
+        if set_json('AutoReload') == 'True':
             self.autoReload.setChecked(True)
 
         # Define layout for network options
         startLayout = QVBoxLayout()
         startLayout.addWidget(self.autoReload)
         connect.setLayout(startLayout)
-
-        # noinspection PyUnresolvedReferences
-        self.autoReload.toggled.connect(self.setAutoReload)
 
         # Create layout for tab
         layout = QVBoxLayout()
@@ -268,8 +262,8 @@ class NetworkTab(QWidget):
     # Set options for auto reload in settings.json
     def setAutoReload(self):
         if self.autoReload.isChecked():
-            j.write_json('AutoReload', 'True')
+            write_json('AutoReload', 'True')
         else:
-            j.write_json('AutoReload', 'False')
+            write_json('AutoReload', 'False')
 
 ########################################################################################################################

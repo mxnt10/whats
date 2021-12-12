@@ -1,10 +1,9 @@
 #!/bin/bash
 
-pkgver='1.3'
+pkgver=$(< RELEASE)
 install_root=${install_root:-""}
 
 set -e
-# shellcheck disable=SC2015
 [ "$install_root" != "" ] && {
   mkdir -p "$install_root"/usr/{bin,share/{applications,pixmaps,whats/icon_status},doc/whats-"$pkgver"}
 } || {
