@@ -3,6 +3,32 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 2.0 ] - 2021-12-13 #############################################
+
+### Added / Adicionado
+ - Files and Sources:
+    - Added RELEASE file.
+ - Code:
+    - Added application name.
+###
+
+### Changed / Modificado
+ - Optimized import modules.
+###
+
+### Fixed / Corrigido
+ - Fixed error:
+-----
+Traceback (most recent call last):
+  File "/usr/share/whats/whats.py", line 267, in eventFilter
+    if obj.parent() == self:
+TypeError: parent(self, QModelIndex): not enough arguments
+-----
+###
+
+#####################################################################
+
+
 ## [ 1.3 ] - 2021-11-06 #############################################
 
 ### Added / Adicionado
@@ -14,7 +40,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ### Changed / Modificado
  - Modify Opacity to int in settings.json.
-###
+###mensagem de navegador desatualizado
 
 ### Fixed / Corrigido
  - Ajust items in settings window.

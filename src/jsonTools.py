@@ -20,6 +20,7 @@ default_js = {
   "AutoReload": "False"
 }
 
+
 # Check if exist settings.json, else file as create
 def checkSettings():
     try:

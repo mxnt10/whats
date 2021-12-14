@@ -64,6 +64,7 @@ class MainWindow(QMainWindow):
         self.start = 0
 
         # Properties window
+        self.setWindowTitle('Whats - WhatsApp Desktop')
         self.setWindowIcon(QIcon(set_icon()))
         self.setMinimumSize(800, 600)
 
@@ -262,9 +263,8 @@ class Browser(QWebEngineView):
             self.save_url = capture_url
 
     def eventFilter(self, obj, event):
-        if obj.parent() == self:
-            if event.type() == QEvent.MouseButtonPress:
-                self.mousePressEvent(event)
+        if event.type() == QEvent.MouseButtonPress:
+            self.mousePressEvent(event)
         return False
 
 
@@ -298,10 +298,10 @@ class WhatsApp(QWebEnginePage):
 
 # Start application
 if __name__ == '__main__':
-    checkSettings()
     prevent()
+    checkSettings()
     whats = QApplication(argv)
-    whats.setApplicationName('Whats - WhatsApp Desktop')
+    whats.setApplicationName('Whats')
     clipboard = whats.clipboard()
     main = MainWindow()
     if set_json('StartUp') == 'Default':

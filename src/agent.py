@@ -9,9 +9,11 @@ from shutil import rmtree
 # Link for userAgent:
 # http://httpbin.org/user-agent
 
+
+# Function for prevent outdated browser message
 def prevent():
     # Outdated browser
-    log_folder = expanduser('~/.local/share/whats.py/QtWebEngine/Default/Service Worker/')
+    log_folder = expanduser('~/.local/share/Whats/QtWebEngine/Default/Service Worker/')
 
     try:
         if isdir(log_folder):
