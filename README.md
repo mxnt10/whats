@@ -5,8 +5,8 @@ Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
 ### Required packages:
 
 - python >= 3.6
-- PyQt5 >= 5.15.5
-- PyQtWebEngine >= 5.15.5
+- PyQt5 >= 5.15.2
+- PyQtWebEngine >= 5.15.2
 
 ### Installation instructions:
 

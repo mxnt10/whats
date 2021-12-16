@@ -10,6 +10,10 @@ from shutil import copy
 # Import sources
 from jsonTools import set_json, write_json
 
+
+########################################################################################################################
+
+
 # Variables for define locals for autostart configuration
 orig = '/usr/share/applications/whats.desktop'
 dest = expanduser('~/.config/autostart')

@@ -7,6 +7,10 @@ from logging import warning
 from os import makedirs, remove
 from os.path import expanduser, isdir
 
+
+########################################################################################################################
+
+
 j_folder = expanduser('~/.config/whats')
 j_file = j_folder + '/settings.json'
 

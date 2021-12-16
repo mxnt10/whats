@@ -1,14 +1,17 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Import Modules
+# Import PyQt5 modules
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 
-# Import Sources
+# Import sources
 from utils import set_icon
 from version import __version__
+
+
+########################################################################################################################
 
 
 # Class for about dialog
@@ -49,6 +52,7 @@ class AboutDialog(QDialog):
         # Create layout
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
+
 
     # Capture event on minimize
     def changeEvent(self, event):

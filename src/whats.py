@@ -6,34 +6,11 @@ from os.path import isfile
 from time import sleep
 from sys import argv
 
-########################################################################################################################
-
-# Verify installed modules
-try:
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtGui import QIcon, QDesktopServices, QFont
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction
-except ImportError as msg:
-    from logging import error
-    exit(error('%s. Please install PyQt5 and QtWebEngine.', msg))
-
-########################################################################################################################
-
-# Verify installed QtWebEngine module
-try:
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings
-except ImportError:
-    from warning import WarnDialog
-    warn = QApplication(argv)
-    msg = WarnDialog()
-    msg.show()
-    exit(warn.exec_())
-
-########################################################################################################################
+# Import PyQt5 modules
+from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings
 
 # Import sources
 from about import AboutDialog
@@ -41,6 +18,7 @@ from setting import SettingDialog
 from agent import user_agent, prevent
 from utils import set_icon, desk
 from jsonTools import checkSettings, set_json, write_json
+
 
 ########################################################################################################################
 
@@ -126,7 +104,9 @@ class MainWindow(QMainWindow):
                 self.trayMenu.addAction(self.trayShow)
                 self.trayMenu.addAction(self.trayExit)
 
-    # ### Functions ####################################################################################################
+
+########################################################################################################################
+
 
     # Show links mouse hover and capture link
     def link_hovered(self, link):
@@ -134,6 +114,7 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(link)
         global capture_url
         capture_url = link
+
 
     # Action for modify title
     def change_title(self, title):
@@ -146,8 +127,9 @@ class MainWindow(QMainWindow):
             self.tray.setIcon(QIcon(set_icon('warning')))
         elif title == 'WhatsApp':
             self.tray.setIcon(QIcon(set_icon('original')))
-        else:
+        elif title[0] == '(':
             self.tray.setIcon(QIcon(set_icon('withmsg')))  # Found messages
+
 
     # Action case press hide
     def on_hide(self):
@@ -157,6 +139,7 @@ class MainWindow(QMainWindow):
         self.trayMenu.clear()
         self.trayMenu.addAction(self.trayShow)
         self.trayMenu.addAction(self.trayExit)
+
 
     # Action case press show
     def on_show(self):
@@ -174,6 +157,7 @@ class MainWindow(QMainWindow):
         self.trayMenu.clear()
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
+
 
     # Capture event when close window
     def closeEvent(self, event):
@@ -216,18 +200,22 @@ class Browser(QWebEngineView):
         self.menuConfig.triggered.connect(self.show_settings)
         self.menuAbout.triggered.connect(self.show_about)
 
-    # ### Functions ####################################################################################################
+
+########################################################################################################################
+
 
     # View settings window
     def show_settings(self):
         sett = SettingDialog(self.main)
         sett.exec_()
 
+
     # View about message
     @staticmethod
     def show_about():
         about = AboutDialog()
         about.exec_()
+
 
     # Open select link in an external browser
     def external_browser(self):
@@ -238,6 +226,7 @@ class Browser(QWebEngineView):
         if capture_url:
             QDesktopServices.openUrl(QUrl(capture_url))
         capture_url = None
+
 
     # Create custom menu
     def contextMenuEvent(self, event):
@@ -253,6 +242,7 @@ class Browser(QWebEngineView):
             self.menu.addAction(self.menuAbout)
         self.menu.popup(event.globalPos())
 
+
     # Execute event on click mouse
     def mousePressEvent(self, event):
         global capture_url
@@ -262,6 +252,8 @@ class Browser(QWebEngineView):
         if event.button() == Qt.RightButton:  # Right button is clicked
             self.save_url = capture_url
 
+
+    # Event on press mouse
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonPress:
             self.mousePressEvent(event)
@@ -279,6 +271,7 @@ class WhatsApp(QWebEnginePage):
         self.profile().downloadRequested.connect(self.download)
         self.featurePermissionRequested.connect(self.permission)
 
+
     # Function for download file
     @pyqtSlot(QWebEngineDownloadItem)
     def download(self, download):
@@ -289,6 +282,8 @@ class WhatsApp(QWebEnginePage):
             download.setPath(path)
             download.accept()
 
+
+    # Permissions for browser
     def permission(self, frame, feature):
         self.setFeaturePermission(frame, feature, QWebEnginePage.PermissionGrantedByUser)
 
@@ -310,6 +305,4 @@ if __name__ == '__main__':
         main.showMaximized()
     elif set_json('StartUp') == 'Minimized':
         main.hide()
-    whats.exec_()
-
-########################################################################################################################
+    exit(whats.exec_())
