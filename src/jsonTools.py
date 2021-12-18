@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 # Import modules
 from json import dump, load
@@ -15,13 +14,13 @@ j_folder = expanduser('~/.config/whats')
 j_file = j_folder + '/settings.json'
 
 default_js = {
-  "AutoStart": "False",
-  "TrayIcon": "True",
-  "StartUp": "Default",
-  "StatusBar": "False",
+  "AutoStart": False,
+  "TrayIcon": True,
+  "StartUp": "Normal",
+  "StatusBar": False,
   "Opacity": 100,
-  "SizeFont": "Default",
-  "AutoReload": "False"
+  "SizeFont": None,
+  "AutoReload": False
 }
 
 
