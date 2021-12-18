@@ -1,12 +1,11 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Import PyQt5 modules
+# Módulos do PyQt5
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 
-# Import sources
+# Modulos integrados (src)
 from utils import set_icon
 from version import __version__
 
@@ -14,20 +13,20 @@ from version import __version__
 ########################################################################################################################
 
 
-# Class for about dialog
+# Classe para o About (Sobre).
 class AboutDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(AboutDialog, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(AboutDialog, self).__init__()
 
-        # Properties window
+        # Definindo as propriedades da janela
         self.setWindowTitle('About Whats')
         self.setFixedSize(0, 0)
 
-        # Define button OK
+        # Botão OK
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
         self.buttonBox.accepted.connect(self.accept)
 
-        # Define layout and text title
+        # Layout e Título
         layout = QVBoxLayout()
         title = QLabel('Whats - WhatsApp Desktop')
         font = title.font()
@@ -35,26 +34,27 @@ class AboutDialog(QDialog):
         title.setFont(font)
         layout.addWidget(title)
 
-        # Define logo for about
+        # Definindo uma logo
         logo = QLabel()
-        logo.setPixmap(QPixmap(set_icon()))
+        logo.setPixmap(QPixmap(set_icon('original')))
         layout.addWidget(logo)
 
-        # Text items
+        # Inserindo as mensagens de informação
         layout.addWidget(QLabel('Version ' + str(__version__) + '\n'))
         layout.addWidget(QLabel('Maintainer: Mauricio Ferrari'))
-        layout.addWidget(QLabel('Contact: m10ferrari1200@gmail.com\n'))
+        layout.addWidget(QLabel('Contact: m10ferrari1200@gmail.com'))
+        layout.addWidget(QLabel('License: GNU General Public License Version 3 (GLPv3)\n'))
 
-        # Define items in center
+        # Definindo tudo no centro
         for i in range(0, layout.count()):
             layout.itemAt(i).setAlignment(Qt.AlignHCenter)
 
-        # Create layout
+        # Adicionando o botão e criando o layout
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
 
 
-    # Capture event on minimize
+    # Evitando que o diálogo About minimize.
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
             if self.windowState() & Qt.WindowMinimized:
