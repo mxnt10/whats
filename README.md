@@ -7,6 +7,7 @@ Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
 - python >= 3.6
 - PyQt5 >= 5.15.2
 - PyQtWebEngine >= 5.15.2
+- beautifulsoup4 >= 4.10.0
 
 ### Installation instructions:
 
@@ -21,7 +22,7 @@ $ sudo ./install.sh
 ### GNU General Public License
 
 This repository has scripts that were created to be free software.<br/>
-Therefore, they can be distributed and / or modified within the terms of the *GNU General Public License*.
+Therefore, they can be distributed and/or modified within the terms of the *GNU General Public License*.
 
 >[General Public License](https://pt.wikipedia.org/wiki/GNU_General_Public_License)
 >
@@ -29,7 +30,8 @@ Therefore, they can be distributed and / or modified within the terms of the *GN
 
 ### Comments
 
-In case of bugs, problems of execution or construction of packages, constructive criticism, among others, please submit a message to one of the contacts below.
+In case of bugs, problems of execution or construction of packages, constructive criticism, among others,
+please submit a message to one of the contacts below.
 
 ### Contact
 
