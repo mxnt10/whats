@@ -1,7 +1,6 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Import modules
+# Módulos importados
 from os.path import expanduser, isdir
 from os import chmod, makedirs
 from shutil import rmtree
@@ -10,13 +9,12 @@ from shutil import rmtree
 ########################################################################################################################
 
 
-# Link for userAgent:
-# http://httpbin.org/user-agent
+# Link para pegar o userAgent: http://httpbin.org/user-agent
+user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'
 
 
-# Function for prevent outdated browser message
+# A ideia dessa função é prevenir a mensagem de novegador desatualizado mesmo que o agent user seja utilizado.
 def prevent():
-    # Outdated browser
     log_folder = expanduser('~/.local/share/Whats/QtWebEngine/Default/Service Worker/')
 
     try:
@@ -24,12 +22,6 @@ def prevent():
             rmtree(log_folder)
 
         makedirs(log_folder)
-        chmod(log_folder, 0o444)
+        chmod(log_folder, 0o444)  # Impedir alteração
     except Exception as msg:
         print(msg)
-
-
-# Define userAgent
-def user_agent():
-    """ Returns a User Agent that will be seen by the website. """
-    return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'
