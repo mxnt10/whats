@@ -3,22 +3,32 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
-## [ 2.0 ] - 2021-12-13 #############################################
+## [ 2.0 ] - 2021-12-19 #############################################
 
 ### Added / Adicionado
  - Files and Sources:
     - Added RELEASE file.
  - Code:
     - Added application name.
+ - Added notifications sound to new messages.
 ###
 
 ### Changed / Modificado
- - Optimized import modules.
- - Refactory code.
+ - Code:
+    - Modify About.
+    - Created 'prevent' function for prevent outdated browser.
+    - Importation of modules optimized.
+    - Refactory code.
+    - Using variable for user agent.
+    - Apply settings emiting signals.
+ - Changed creation settings.json file.
 ###
 
 ### Removed / Removido
- - Removed 'warning.py'.
+ - Files and Sources:
+    - Removed 'warning.py'.
+ - Code:
+    - Removed function for user agent.
 ###
 
 ### Fixed / Corrigido
@@ -29,6 +39,7 @@ Traceback (most recent call last):
     if obj.parent() == self:
 TypeError: parent(self, QModelIndex): not enough arguments
 -----
+ - Fixed option for open in system tray.
 ###
 
 #####################################################################
@@ -98,7 +109,9 @@ TypeError: parent(self, QModelIndex): not enough arguments
  - Code:
     - Removed menu 'External Browser'.
     - Removed unnecessary functions in sources and utils.
- - Removed folder utils, unnecessary for open link in the browser.
+ - Files and Sources:
+    - Removed folder utils, unnecessary for open link
+      in the browser.
 ###
 
 ### Fixed / Corrigido
