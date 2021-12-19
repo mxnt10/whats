@@ -40,6 +40,8 @@ Traceback (most recent call last):
 TypeError: parent(self, QModelIndex): not enough arguments
 -----
  - Fixed option for open in system tray.
+ - Fixed auto reload.
+ - Fixed settings for trayicon.
 ###
 
 #####################################################################
