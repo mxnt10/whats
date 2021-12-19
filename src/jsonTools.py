@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Import modules
+# Módulos importados
 from json import dump, load
 from logging import warning
 from os import makedirs, remove
 from os.path import expanduser, isdir
 
+# Modulos integrados (src)
+from version import __appname__
 
 ########################################################################################################################
 
 
-j_folder = expanduser('~/.config/whats')
+j_folder = expanduser('~/.config/' + __appname__)
 j_file = j_folder + '/settings.json'
 
 default_js = {
