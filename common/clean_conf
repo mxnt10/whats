@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -r ~/.config/whats
+rm -r ~/.config/Whats
