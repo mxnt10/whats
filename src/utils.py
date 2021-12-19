@@ -8,6 +8,7 @@ from shutil import copy
 
 # Modulos integrados (src)
 from jsonTools import set_json, write_json
+from version import __dir__, __desktop__, __icon__
 
 
 ########################################################################################################################
@@ -18,11 +19,11 @@ def set_icon(entry_icon=None):
 
     # Definição da localização dos ícones e de forma opcional, os ícones a serem usados
     if entry_icon is not None:
-        icon = '/usr/share/whats/icon_status/' + entry_icon + '.png'
+        icon = __dir__ + '/icon_status/' + entry_icon + '.png'
         l_icon = '../icon_status/' + entry_icon + '.png'
     else:
-        icon = '/usr/share/pixmaps/whats.svg'
-        l_icon = '../appdata/whats.svg'
+        icon = '/usr/share/pixmaps/' + __icon__
+        l_icon = '../appdata/' + __icon__
 
     try:
         with open(icon):
@@ -40,9 +41,9 @@ def set_icon(entry_icon=None):
 
 # Verifica a existência do arquivo whats.desktop no diretório autostart.
 def set_desktop():
-    orig = '/usr/share/applications/whats.desktop'
+    orig = '/usr/share/applications/' + __desktop__
     dest = expanduser('~/.config/autostart')
-    desk = dest + '/whats.desktop'
+    desk = dest + '/' + __desktop__
 
     try:
         if not isfile(desk) and set_json('AutoStart'):
@@ -60,8 +61,8 @@ def set_desktop():
 
 # Busca por arquivos de áudio que servirão como tema das mensagens de notificação.
 def setSound(sound):
-    dirSound = '/usr/share/whats/sound/' + sound + '.mp3'
-    l_dirSound = realpath('../sound/' + sound + '.mp3')  # O realpath é nessesário para funcionar no QMediaPlayer
+    dirSound = __dir__ + '/sound/' + sound + '.mp3'
+    l_dirSound = realpath('../sound/' + sound + '.mp3')  # O realpath é necessário para funcionar no QMediaPlayer
 
     try:
         with open(dirSound):
