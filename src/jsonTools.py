@@ -20,9 +20,16 @@ default_js = {
   "TrayIcon": True,
   "StartUp": "Normal",
   "StatusBar": False,
+  "DarkMode": False,
+  "NotifyMessage": False,
+  "NotifySound": False,
+  "VerifyNotify": 200,
+  "TimeMessage": 5000,
+  "SoundTheme": "message",
   "Opacity": 100,
   "SizeFont": None,
-  "AutoReload": False
+  "AutoReload": False,
+  "TimeReload": 2000
 }
 
 
