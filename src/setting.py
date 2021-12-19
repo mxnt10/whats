@@ -124,8 +124,8 @@ class GeneralTab(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(confApp)
         layout.addWidget(startUp)
+        layout.addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
         self.setLayout(layout)
-        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
 
 ########################################################################################################################
@@ -224,8 +224,8 @@ class CustomTab(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(customInterface)
         layout.addWidget(customFont)
+        layout.addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
         self.setLayout(layout)
-        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
 
 ########################################################################################################################
@@ -277,8 +277,8 @@ class NetworkTab(QWidget):
         # Criando o layout
         layout = QVBoxLayout()
         layout.addWidget(connect)
+        layout.addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
         self.setLayout(layout)
-        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
 
     # Definindo opção para autoreconexão em 'settings.json'.
