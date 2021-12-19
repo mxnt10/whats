@@ -379,6 +379,13 @@ if __name__ == '__main__':
     prevent()
     checkSettings()
 
+    # Vai ser usado a mesma base para todos os webapps criados, portanto essa opção será incluída,
+    # sendo ela usada ou não. Ainda assim, será possível a sua ativação manual em 'settings.json'.
+    if set_json('DarkMode'):
+        arg = argv + ["--blink-settings=forceDarkModeEnabled=true"]
+    else:
+        arg = []
+
     # Verificando alteração manual em autostart
     if isfile(desk) and not set_json('AutoStart'):
         write_json('AutoStart', True)
@@ -386,7 +393,7 @@ if __name__ == '__main__':
         write_json('AutoStart', False)
 
     # Inicialização do programa
-    app = QApplication(argv)
+    app = QApplication(argv + arg)
     app.setApplicationName(__appname__)
     clipboard = app.clipboard()
     main = MainWindow()
