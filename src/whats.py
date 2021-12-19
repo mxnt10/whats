@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
 
         # Definindo o som de notificação
         self.notify_sound = QMediaPlayer()
-        self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound('message'))))
+        self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
 
         # Loop para a verificação de novas mensagens
         self.notify_loop = QTimer()
@@ -171,9 +171,8 @@ class MainWindow(QMainWindow):
             ms = 'Unread messages.'
         else:
             ms = 'Unread message.'
-        msg = str(self.soma) + ' ' + ms
-        ico = realpath(set_icon('notify'))
-        com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=5000 --icon="' + ico + '" "' + msg + '"'
+        com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) +\
+              ' --icon="' + realpath(set_icon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
         run(com, shell=True)
 
 
