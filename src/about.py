@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 
 # Modulos integrados (src)
 from utils import set_icon
-from version import __version__
+from version import __version__, __appname__, __pagename__
 
 
 ########################################################################################################################
@@ -19,7 +19,7 @@ class AboutDialog(QDialog):
         super(AboutDialog, self).__init__()
 
         # Definindo as propriedades da janela
-        self.setWindowTitle('About Whats')
+        self.setWindowTitle('About ' + __appname__)
         self.setFixedSize(0, 0)
 
         # Botão OK
@@ -28,7 +28,7 @@ class AboutDialog(QDialog):
 
         # Layout e Título
         layout = QVBoxLayout()
-        title = QLabel('Whats - WhatsApp Desktop')
+        title = QLabel(__pagename__)
         font = title.font()
         font.setPointSize(20)
         title.setFont(font)
