@@ -7,7 +7,6 @@ from logging import warning
 from os.path import isfile, expanduser, realpath
 from subprocess import run
 from sys import argv
-from time import sleep
 
 # Módulos do PyQt5
 from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal
@@ -330,7 +329,7 @@ class Browser(QWebEngineView):
 ########################################################################################################################
 
 
-# Classe para a página do webapp
+# Classe para a página do webapp.
 class WhatsApp(QWebEnginePage):
     def __init__(self, *args, **kwargs):
         QWebEnginePage.__init__(self, *args, **kwargs)
