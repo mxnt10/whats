@@ -28,7 +28,7 @@ class AboutDialog(QDialog):
         logo = QLabel()
         logo.setPixmap(QPixmap(set_icon('original')))
 
-        # Criando o layout
+        # Layout com as informações
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(logo)
@@ -37,8 +37,7 @@ class AboutDialog(QDialog):
         layout.addWidget(QLabel('Contact: m10ferrari1200@gmail.com'))
         layout.addWidget(QLabel('License: GNU General Public License Version 3 (GLPv3)\n'))
 
-        # Definindo os widgets no centro
-        for i in range(0, layout.count()):
+        for i in range(0, layout.count()):  # Definindo os widgets no centro
             layout.itemAt(i).setAlignment(Qt.AlignHCenter)
 
         layout.addWidget(QDialogButtonBox(QDialogButtonBox.Ok, clicked=self.accept))
