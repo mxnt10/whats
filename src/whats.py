@@ -26,6 +26,7 @@ from version import __appname__, __pagename__, __url__, __desktop__, __err__
 # Variáveis globais
 cap_url = None
 desk = expanduser('~/.config/autostart/' + __desktop__)
+force_open_link = True
 
 
 ########################################################################################################################
@@ -66,6 +67,7 @@ class MainWindow(QMainWindow):
         self.view.statusbar_emit.connect(self.changeStatusBar)
         self.view.font_emit.connect(self.changeFont)
         self.view.opacity_emit.connect(self.changeOpacity)
+        self.view.tray_emit.connect(self.changeTrayIcon)
         self.view.setPage(WhatsApp(self.view))
         self.view.page().linkHovered.connect(self.link_hovered)
         self.view.loadFinished.connect(self.loaded)
@@ -102,12 +104,21 @@ class MainWindow(QMainWindow):
             self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
         self.tray.setContextMenu(self.trayMenu)
+        self.changeTrayIcon()
 
-        # Ativação do ícone para o system tray
-        if set_json('TrayIcon'):
-            self.tray.show()
 
 ########################################################################################################################
+
+
+    # Definindo as opções do tray icon.
+    def changeTrayIcon(self):
+        if set_json('TrayIcon'):
+            self.tray.show()
+            if not self.notify_start:
+                self.notify_loop.start()
+        else:
+            if self.tray.isVisible():
+                self.tray.hide()
 
 
     # Definindo a opacidade da interface.
@@ -251,6 +262,7 @@ class Browser(QWebEngineView):
     statusbar_emit = pyqtSignal()
     font_emit = pyqtSignal()
     opacity_emit = pyqtSignal()
+    tray_emit = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.menu = QMenu()  # Para criar o menu de contexto
@@ -284,6 +296,7 @@ class Browser(QWebEngineView):
         settings.statusbar_emit.connect(self.statusbar_emit)
         settings.font_emit.connect(self.font_emit)
         settings.opacity_emit.connect(self.opacity_emit)
+        settings.tray_emit.connect(self.tray_emit)
         settings.exec_()
 
 
@@ -315,7 +328,8 @@ class Browser(QWebEngineView):
     # Executando ações conforme o clique do mouse.
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            if cap_url:  # Vai ter clique direto, mas só vai funcionar essa opção com a captura de um link
+            # Vai ter clique direto, mas só vai funcionar essa opção com a captura de um link
+            if cap_url and force_open_link:
                 self.external_browser()
         if event.button() == Qt.RightButton:
             self.save_url = cap_url  # Vai precisar salvar a url nessa variável para o menu de contexto

@@ -18,6 +18,7 @@ class SettingDialog(QDialog):
     statusbar_emit = pyqtSignal()
     font_emit = pyqtSignal()
     opacity_emit = pyqtSignal()
+    tray_emit = pyqtSignal()
 
     def __init__(self):
         super(SettingDialog, self).__init__()
@@ -25,6 +26,10 @@ class SettingDialog(QDialog):
         # Propriedades gerais
         self.setWindowTitle('Settings')
         self.setFixedSize(0, 0)
+
+        # Definindo a aba de configuração geral que vai receber os sinais
+        generalTab = GeneralTab()
+        generalTab.tray_emit.connect(self.tray_emit)
 
         # Definindo a aba de personalização que vai receber os sinais
         customTab = CustomTab()
@@ -34,7 +39,7 @@ class SettingDialog(QDialog):
 
         # Widget para adicionar as abas
         tabWidget = QTabWidget()
-        tabWidget.addTab(GeneralTab(), 'General')
+        tabWidget.addTab(generalTab, 'General')
         tabWidget.addTab(customTab, 'Custom')
         tabWidget.addTab(NetworkTab(), 'Network')
 
@@ -61,6 +66,9 @@ class SettingDialog(QDialog):
 
 # Classe para configurações gerais
 class GeneralTab(QWidget):
+    # Sinal a ser emitido
+    tray_emit = pyqtSignal()
+
     def __init__(self):
         super(GeneralTab, self).__init__()
 
@@ -150,6 +158,7 @@ class GeneralTab(QWidget):
             write_json('TrayIcon', False)
             if self.showMinimize.isChecked():
                 self.showDefault.setChecked(True)
+        self.tray_emit.emit()
 
 
     # Alterando opções para inicialização em 'settings.json'.
@@ -235,10 +244,9 @@ class CustomTab(QWidget):
     def setStatusBar(self):
         if self.showStatus.isChecked():
             write_json('StatusBar', True)
-            self.statusbar_emit.emit()
         else:
             write_json('StatusBar', False)
-            self.statusbar_emit.emit()
+        self.statusbar_emit.emit()
 
 
     # Alteração dos valores para opacidade em 'settings.json'.
