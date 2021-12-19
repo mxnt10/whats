@@ -13,7 +13,7 @@ from version import __version__, __appname__, __pagename__
 ########################################################################################################################
 
 
-# Classe para o About (Sobre).
+# Classe para o diálogo About.
 class AboutDialog(QDialog):
     def __init__(self):
         super(AboutDialog, self).__init__()
