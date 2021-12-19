@@ -48,12 +48,12 @@ class MainWindow(QMainWindow):
 
         # Loop para a verificação de novas mensagens
         self.notify_loop = QTimer()
-        self.notify_loop.setInterval(200)
+        self.notify_loop.setInterval(set_json('VerifyNotify'))
         self.notify_loop.timeout.connect(lambda: self.view.page().toHtml(self.processHtml))
 
         # Loop para a autorreconexão
         self.reload = QTimer()
-        self.reload.setInterval(2000)
+        self.reload.setInterval(set_json('TimeReload'))
         self.reload.timeout.connect(lambda: self.view.setUrl(QUrl(__url__)))
 
         # Propriedades gerais
@@ -189,13 +189,15 @@ class MainWindow(QMainWindow):
         if self.view.page().title() == __err__:  # Se der erro de conexão o título inicial não muda
             if not self.reload_start and set_json('AutoReload'):  # Autorreconexão
                 self.reload.start()
+                self.notify = self.changeTray = 0
                 self.reload_start = True
                 if self.notify_start:  # Notificação pode ser desativada para economizar recursos de processamento
                     self.notify_loop.stop()
+                    self.notify_start = False
         else:
             if self.reload_start:  # Ao voltar a conexão o loop deve parar
                 self.reload.stop()
-                self.reload_start = self.notify_start = False
+                self.reload_start = False
         if not self.notify_start and set_json('TrayIcon'):  # Ativa o som de notificação
             self.notify_loop.start()
             self.notify_start = True  # Não precisa ficar reativando o som cada vez que o webapp é recarregado
@@ -225,8 +227,9 @@ class MainWindow(QMainWindow):
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
 
-        if self.isMinimized():  # Tentando evitar que o programa minimize ao invéz de maximizar
-            self.show()
+        if self.isMinimized():  # Evitando que o programa minimize ao invéz de maximizar
+            for a in range(1, 6):
+                self.show()
 
 
     # Evento ao fechar a janela.
