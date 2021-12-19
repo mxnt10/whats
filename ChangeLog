@@ -96,8 +96,9 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
  - Files and Sources:
     - Added jsonTools.py in src.
     - Added error.png in icon_status folder.
- - Added status bar.
- - Added funcionality for 'Preferencies' menu.
+ - Code:
+    - Added status bar.
+    - Added funcionality for 'Preferencies' menu.
 ###
 
 ### Upgraded / Atualizado
