@@ -1,47 +1,55 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Import PyQt5 modules
-from PyQt5.QtCore import QEvent, Qt
-from PyQt5.QtWebEngineWidgets import QWebEngineSettings
+# Módulos do PyQt5
+from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget, QWidget, QGroupBox, QCheckBox,
                              QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy)
 
-# Import sources
+# Modulos integrados (src)
 from jsonTools import set_json, write_json
 from utils import set_desktop
 
 ########################################################################################################################
 
 
-# Class for settings dialog
+# Classe para o painel de configurações
 class SettingDialog(QDialog):
-    def __init__(self, win, *args, **kwargs):
-        self.main = win  # For modify status bar
+    # Definição dos sinais a serem emitidos
+    statusbar_emit = pyqtSignal()
+    font_emit = pyqtSignal()
+    opacity_emit = pyqtSignal()
 
-        super(SettingDialog, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(SettingDialog, self).__init__()
 
-        # Properties window
+        # Propriedades gerais
         self.setWindowTitle('Settings')
         self.setFixedSize(0, 0)
 
-        # Widgets for add tabs
+        # Definindo a aba de personalização que vai receber os sinais
+        customTab = CustomTab()
+        customTab.statusbar_emit.connect(self.statusbar_emit)
+        customTab.font_emit.connect(self.font_emit)
+        customTab.opacity_emit.connect(self.opacity_emit)
+
+        # Widget para adicionar as abas
         tabWidget = QTabWidget()
         tabWidget.addTab(GeneralTab(), 'General')
-        tabWidget.addTab(CustomTab(self.main), 'Custom')
+        tabWidget.addTab(customTab, 'Custom')
         tabWidget.addTab(NetworkTab(), 'Network')
 
-        # Define button OK
+        # Botão OK
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
         buttonBox.accepted.connect(self.accept)
 
-        # Create layout
+        # Criando o layout
         layout = QVBoxLayout()
         layout.addWidget(tabWidget)
         layout.addWidget(buttonBox)
         self.setLayout(layout)
 
-    # Capture event on minimize
+
+    # Evento para impedir a minimização da janela.
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
             if self.windowState() & Qt.WindowMinimized:
@@ -51,39 +59,39 @@ class SettingDialog(QDialog):
 ########################################################################################################################
 
 
-# Class for general configurations
+# Classe para configurações gerais
 class GeneralTab(QWidget):
-    def __init__(self, *args, **kwargs):
-        super(GeneralTab, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(GeneralTab, self).__init__()
 
-        # Groups for separate options
+        # Grupos para separar as opções
         confApp = QGroupBox('Application')
         startUp = QGroupBox('Startup')
 
-        # General options for interface
+        # Opções gerais para interface
         self.autoStart = QCheckBox('Auto start on login')
         self.showTray = QCheckBox('Show tray icon')
 
-        # Define checkbox for auto start
-        if set_json('AutoStart') == 'True':
+        # Definir checkbox para autoinicialização
+        if set_json('AutoStart'):
             self.autoStart.setChecked(True)
 
-        # Define checkbox for tray icon
-        if set_json('TrayIcon') == 'True':
+        # Definir checkbox para system tray
+        if set_json('TrayIcon'):
             self.showTray.setChecked(True)
 
-        # Messages for raio buttons
+        # Messagens para os radio buttons
         self.msg_show = 'Standard startup'
         self.msg_max = 'Open maximized'
         self.msg_min = 'Open minimized to system tray'
 
-        # StartUp options
+        # Opções de inicialização
         self.showDefault = QRadioButton(self.msg_show)
         self.showMaximize = QRadioButton(self.msg_max)
         self.showMinimize = QRadioButton(self.msg_min)
 
-        # Define selection for startup
-        if set_json('StartUp') == 'Default':
+        # definir seleção para inicialização
+        if set_json('StartUp') == 'Normal':
             self.showDefault.setChecked(True)
         elif set_json('StartUp') == 'Maximized':
             self.showMaximize.setChecked(True)
@@ -94,55 +102,60 @@ class GeneralTab(QWidget):
         self.autoStart.toggled.connect(self.setAutoStart)
         self.showTray.toggled.connect(self.setTrayIcon)
 
-        # Instructions for execute action with press a radio button
+        # Instruções para executar ações ao pressionar nos radio buttons
         self.showDefault.toggled.connect(lambda: self.radioButtonState(self.showDefault))
         self.showMaximize.toggled.connect(lambda: self.radioButtonState(self.showMaximize))
         self.showMinimize.toggled.connect(lambda: self.radioButtonState(self.showMinimize))
 
-        # Set layout for general options
+        # Layout para as opções gerais
         startLayout = QVBoxLayout()
         startLayout.addWidget(self.autoStart)
         startLayout.addWidget(self.showTray)
         confApp.setLayout(startLayout)
 
-        # Set layout for startup options
+        # Layout para as opções de inicialização
         showLayout = QVBoxLayout()
         showLayout.addWidget(self.showDefault)
         showLayout.addWidget(self.showMaximize)
         showLayout.addWidget(self.showMinimize)
         startUp.setLayout(showLayout)
 
-        # Create layout for tab
+        # Layout geral
         layout = QVBoxLayout()
         layout.addWidget(confApp)
         layout.addWidget(startUp)
         self.setLayout(layout)
+        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
-    # ### Functions ####################################################################################################
 
-    # Set options for auto start in settings.json
+########################################################################################################################
+
+
+    # Definindo opções para autoinicialização em 'settings.json'.
     def setAutoStart(self):
         if self.autoStart.isChecked():
-            write_json('AutoStart', 'True')
+            write_json('AutoStart', True)
         else:
-            write_json('AutoStart', 'False')
+            write_json('AutoStart', False)
         st = set_desktop()
-        if not st:
+        if not st:  # Prevenindo caso o arquivo desktop não exista
             self.autoStart.setChecked(False)
 
-    # Set options for system tray in settings.json
+
+    # Alterando opções para o system tray em 'settings.json'.
     def setTrayIcon(self):
         if self.showTray.isChecked():
-            write_json('TrayIcon', 'True')
+            write_json('TrayIcon', True)
         else:
-            write_json('TrayIcon', 'False')
+            write_json('TrayIcon', False)
             if self.showMinimize.isChecked():
                 self.showDefault.setChecked(True)
 
-    # Set options for startup in settings.json
+
+    # Alterando opções para inicialização em 'settings.json'.
     def radioButtonState(self, button):
         if button.text() == self.msg_show and self.showDefault.isChecked():
-            write_json('StartUp', 'Default')
+            write_json('StartUp', 'Normal')
         if button.text() == self.msg_max and self.showMaximize.isChecked():
             write_json('StartUp', 'Maximized')
         if button.text() == self.msg_min and self.showMinimize.isChecked():
@@ -153,24 +166,29 @@ class GeneralTab(QWidget):
 ########################################################################################################################
 
 
-# Class for custom configurations
+# Classe para configurações de customização do programa
 class CustomTab(QWidget):
-    def __init__(self, win, *args, **kwargs):
-        self.main = win  # For modify status bar
+    # Definição dos sinais a serem emitidos
+    statusbar_emit = pyqtSignal()
+    font_emit = pyqtSignal()
+    opacity_emit = pyqtSignal()
 
-        super(CustomTab, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(CustomTab, self).__init__()
+
+        # Grupos para separar as opções
         customInterface = QGroupBox('Interface')
         customFont = QGroupBox('Font')
 
-        # Options for set font
+        # Opções para definir a fonte
         self.font = QLabel('Window Size Font: ' + str(set_json('SizeFont')))
         self.fontSlider = QSlider(Qt.Horizontal)
-        self.fontSlider.setRange(8, 18)
+        self.fontSlider.setRange(6, 20)
         self.fontSlider.setValue(set_json('SizeFont'))
         self.fontSlider.setTickPosition(QSlider.TicksAbove)
         self.fontSlider.setTickInterval(1)
 
-        # Options for Custom interface
+        # Opções para customizar a interface
         self.showStatus = QCheckBox('Show status bar')
         self.frameLabel = QLabel('Opacity:')
         self.frameSlider = QSlider(Qt.Horizontal)
@@ -179,15 +197,16 @@ class CustomTab(QWidget):
         self.frameSlider.setTickPosition(QSlider.TicksAbove)
         self.frameSlider.setTickInterval(5)
 
-        if set_json('StatusBar') == 'True':
+        # Verificando se o statusbar está ativado
+        if set_json('StatusBar'):
             self.showStatus.setChecked(True)
 
-        # Functions for modify values
+        # Instruções para modificação dos valores
         self.showStatus.toggled.connect(self.setStatusBar)
         self.frameSlider.valueChanged.connect(self.setOpacity)
         self.fontSlider.valueChanged.connect(self.setSizeFont)
 
-        # Create grid for a good organization
+        # usando grid para uma melhor organização
         customLayout = QGridLayout()
         customLayout.addWidget(self.showStatus, 0, 0, 1, 2)
         customLayout.addWidget(QLabel(''), 1, 0, 1, 2)
@@ -195,75 +214,76 @@ class CustomTab(QWidget):
         customLayout.addWidget(self.frameSlider, 2, 1)
         customInterface.setLayout(customLayout)
 
-        # Create layout for font
+        # Layout para fonte
         fontLayout = QVBoxLayout()
         fontLayout.addWidget(self.font)
         fontLayout.addWidget(self.fontSlider)
         customFont.setLayout(fontLayout)
 
-        # Create layout for tab
+        # Layout geral
         layout = QVBoxLayout()
         layout.addWidget(customInterface)
         layout.addWidget(customFont)
         self.setLayout(layout)
+        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
-    # ### Functions ####################################################################################################
-
-    # Set options for status bar in settings.json
-    def setStatusBar(self):
-        if self.showStatus.isChecked():
-            write_json('StatusBar', 'True')
-            self.main.statusBar().show()
-        else:
-            write_json('StatusBar', 'False')
-            self.main.statusBar().hide()
-
-    # Set value for opacity in settings.json
-    def setOpacity(self):
-        write_json('Opacity', self.frameSlider.value())
-        if set_json('Opacity') == 100:
-            self.main.setWindowOpacity(1)
-        else:
-            str_num = '0.' + str(self.frameSlider.value())
-            self.main.setWindowOpacity(float(str_num))
-
-    # Modify size font and write in settings.json
-    def setSizeFont(self):
-        self.font.setText('Window Size Font: ' + str(self.fontSlider.value()))
-        write_json('SizeFont', self.fontSlider.value())
-        self.main.view.settings().globalSettings().setFontSize(QWebEngineSettings.MinimumFontSize,
-                                                               int(set_json('SizeFont')))
 
 ########################################################################################################################
 
 
-# Class for network configurations
+    # Definindo opções para o statusbar em 'settings.json'.
+    def setStatusBar(self):
+        if self.showStatus.isChecked():
+            write_json('StatusBar', True)
+            self.statusbar_emit.emit()
+        else:
+            write_json('StatusBar', False)
+            self.statusbar_emit.emit()
+
+
+    # Alteração dos valores para opacidade em 'settings.json'.
+    def setOpacity(self):
+        write_json('Opacity', self.frameSlider.value())
+        self.opacity_emit.emit()
+
+
+    # Alterar valores da fonte em 'settings.json'.
+    def setSizeFont(self):
+        self.font.setText('Size Font: ' + str(self.fontSlider.value()))
+        write_json('SizeFont', self.fontSlider.value())
+        self.font_emit.emit()
+
+
+########################################################################################################################
+
+
+# Classe para configuração de opções para conexão a internet.
 class NetworkTab(QWidget):
-    def __init__(self, *args, **kwargs):
-        super(NetworkTab, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(NetworkTab, self).__init__()
         connect = QGroupBox('Connection')
         self.autoReload = QCheckBox('Reload automatically in case of connection fail')
         self.autoReload.toggled.connect(self.setAutoReload)
 
-        if set_json('AutoReload') == 'True':
+        # Verificando se a opção autoreload está ativa para setar o check box
+        if set_json('AutoReload'):
             self.autoReload.setChecked(True)
 
-        # Define layout for network options
+        # Definindo o layout
         startLayout = QVBoxLayout()
         startLayout.addWidget(self.autoReload)
         connect.setLayout(startLayout)
 
-        # Create layout for tab
+        # Criando o layout
         layout = QVBoxLayout()
         layout.addWidget(connect)
         self.setLayout(layout)
-        self.layout().addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Add a vertical spacer.
+        self.layout().addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
 
-    # Set options for auto reload in settings.json
+
+    # Definindo opção para autoreconexão em 'settings.json'.
     def setAutoReload(self):
         if self.autoReload.isChecked():
-            write_json('AutoReload', 'True')
+            write_json('AutoReload', True)
         else:
-            write_json('AutoReload', 'False')
-
-########################################################################################################################
+            write_json('AutoReload', False)
