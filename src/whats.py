@@ -238,8 +238,9 @@ class MainWindow(QMainWindow):
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
 
-        if self.isMinimized():  # Evitando que o programa minimize ao invéz de maximizar
-            for a in range(1, 6):
+        # Evitando que o programa minimize ao invés de maximizar
+        if self.isMinimized():
+            for a in range(1, 10):
                 self.show()
 
 
