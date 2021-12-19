@@ -5,6 +5,9 @@ from os.path import expanduser, isdir
 from os import chmod, makedirs
 from shutil import rmtree
 
+# Modulos integrados (src)
+from version import __appname__
+
 
 ########################################################################################################################
 
@@ -15,7 +18,7 @@ user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 
 # A ideia dessa função é prevenir a mensagem de novegador desatualizado mesmo que o agent user seja utilizado.
 def prevent():
-    log_folder = expanduser('~/.local/share/Whats/QtWebEngine/Default/Service Worker/')
+    log_folder = expanduser('~/.local/share/' + __appname__ + '/QtWebEngine/Default/Service Worker/')
 
     try:
         if isdir(log_folder):
