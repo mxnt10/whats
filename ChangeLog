@@ -8,17 +8,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ### Added / Adicionado
  - Files and Sources:
     - Added RELEASE file.
+    - Added mp3 files in sound folder.
  - Code:
     - Added application name.
- - Added notifications sound to new messages.
+    - Added notifications sound to new messages.
 ###
 
 ### Changed / Modificado
  - Code:
+    - Refactory code.
     - Modify About.
     - Created 'prevent' function for prevent outdated browser.
     - Importation of modules optimized.
-    - Refactory code.
     - Using variable for user agent.
     - Apply settings emiting signals.
  - Changed creation settings.json file.
@@ -33,15 +34,17 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ### Fixed / Corrigido
  - Fixed error:
------
-Traceback (most recent call last):
-  File "/usr/share/whats/whats.py", line 267, in eventFilter
-    if obj.parent() == self:
-TypeError: parent(self, QModelIndex): not enough arguments
------
- - Fixed option for open in system tray.
- - Fixed auto reload.
- - Fixed settings for trayicon.
+-----------------------------------------------------------------
+    Traceback (most recent call last):
+      File "/usr/share/whats/whats.py", line 267, in eventFilter
+        if obj.parent() == self:
+    TypeError: parent(self, QModelIndex): not enough arguments
+-----------------------------------------------------------------
+ - Code:
+    - Fixed option for open in system tray.
+    - Fixed auto reload.
+    - Fixed settings for trayicon.
+    - Prevent open minimized when show window.
 ###
 
 #####################################################################
