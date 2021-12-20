@@ -187,7 +187,7 @@ class BoxToolTip(QCheckBox):
 
     def mouseMoveEvent(self, event):
         pos = self.mapToGlobal(event.pos())
-        QToolTip.showText(pos, 'Effect on next program startup')
+        QToolTip.showText(pos, 'Dark mode will only have effect on next program startup')
 
 
 # Classe para configurações de customização do programa.
@@ -215,7 +215,7 @@ class CustomTab(QWidget):
         # Opções para customizar a interface
         self.showStatus = QCheckBox('Show status bar')
         self.darkMode = BoxToolTip('Dark mode')
-        self.darkMode.setFixedWidth(140)
+        self.darkMode.setFixedWidth(160)
         self.frameLabel = QLabel('Opacity:')
         self.frameSlider = QSlider(Qt.Horizontal)
         self.frameSlider.setRange(20, 100)
