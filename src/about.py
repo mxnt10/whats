@@ -32,7 +32,7 @@ class AboutDialog(QDialog):
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(logo)
-        layout.addWidget(QLabel('Version ' + str(__version__) + '\n'))
+        layout.addWidget(QLabel('Version ' + __version__ + '\n'))
         layout.addWidget(QLabel('Maintainer: Mauricio Ferrari'))
         layout.addWidget(QLabel('Contact: m10ferrari1200@gmail.com'))
         layout.addWidget(QLabel('License: GNU General Public License Version 3 (GLPv3)\n'))
