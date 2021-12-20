@@ -313,19 +313,50 @@ class NotifyTab(QWidget):
         self.optionMessage = QCheckBox('View notification messages')
         self.optionSound = QCheckBox('Emit notification sounds')
 
+        # Verificando se o statusbar está ativo
+        if set_json('NotifyMessage'):
+            self.optionMessage.setChecked(True)
+
+        # Verificando se o modo dark está ativo
+        if set_json('NotifySound'):
+            self.optionSound.setChecked(True)
+
+        # Instruções para modificação dos valores
+        self.optionMessage.toggled.connect(self.setNotifyMessage)
+        self.optionSound.toggled.connect(self.setNotifySound)
+
         # Definindo o layout para opções de mensagem
         messageLayout = QGridLayout()
+        messageLayout.addWidget(self.optionMessage)
         messageNotify.setLayout(messageLayout)
 
         # Definindo o layout para opções de som
         soundLayout = QGridLayout()
+        soundLayout.addWidget(self.optionSound)
         soundNotify.setLayout(soundLayout)
 
         # Criando o layout
         layout = QVBoxLayout()
         layout.addWidget(messageNotify)
         layout.addWidget(soundNotify)
+        layout.addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
         self.setLayout(layout)
+
+
+########################################################################################################################
+
+
+    def setNotifyMessage(self):
+        if self.optionMessage.isChecked():
+            write_json('NotifyMessage', True)
+        else:
+            write_json('NotifyMessage', False)
+
+    def setNotifySound(self):
+        if self.optionSound.isChecked():
+            write_json('NotifySound', True)
+        else:
+            write_json('NotifySound', False)
 
 
 ########################################################################################################################

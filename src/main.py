@@ -156,8 +156,10 @@ class MainWindow(QMainWindow):
             self.soma += int(tag.getText())  # Contabilizando o número de mensagens
         if self.soma != self.notify and self.soma != 0:
             if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
-                self.notify_sound.play()
-                self.notifyMessage()
+                if set_json('NotifySound'):
+                    self.notify_sound.play()
+                if set_json('NotifyMessage'):
+                    self.notifyMessage()
             self.notify = self.soma  # Necessário para mapear alterações no número de mensagens
         try:
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
