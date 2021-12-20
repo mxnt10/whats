@@ -20,7 +20,7 @@ cp -Tr src "$install_root"/usr/share/whats
 
 echo "#!/bin/bash
 cd /usr/share/whats
-python3 whats.py" > "$install_root"/usr/bin/whats
+python3 main.py" > "$install_root"/usr/bin/whats
 
 chmod 755 "$install_root"/usr/bin/whats
 exit 0
