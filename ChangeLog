@@ -17,6 +17,8 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ###
 
 ### Changed / Modificado
+ - Files and Sources:
+    - Rename whats.py to main.py in src.
  - Code:
     - Refactory code.
     - Modify About.
