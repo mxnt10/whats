@@ -153,10 +153,10 @@ class MainWindow(QMainWindow):
         tags = res.findAll("div", {"class": "_1pJ9J"})
 
         for tag in tags:
-            self.soma += int(tag.getText())
+            self.soma += int(tag.getText())  # Contabilizando o número de mensagens
         if self.soma != self.notify and self.soma != 0:
             if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
-                self.notify_sound.play()  # som de notificação
+                self.notify_sound.play()
                 self.notifyMessage()
             self.notify = self.soma  # Necessário para mapear alterações no número de mensagens
         try:

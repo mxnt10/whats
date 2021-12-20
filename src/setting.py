@@ -3,11 +3,14 @@
 # Módulos do PyQt5
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget, QWidget, QGroupBox, QCheckBox,
-                             QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy)
+                             QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy, QToolTip)
 
 # Modulos integrados (src)
 from jsonTools import set_json, write_json
 from utils import set_desktop
+
+# Variáveis globais
+enable_dark_mode_option = False
 
 ########################################################################################################################
 
@@ -41,6 +44,7 @@ class SettingDialog(QDialog):
         tabWidget = QTabWidget()
         tabWidget.addTab(generalTab, 'General')
         tabWidget.addTab(customTab, 'Custom')
+        tabWidget.addTab(NotifyTab(), 'Notify')
         tabWidget.addTab(NetworkTab(), 'Network')
 
         # Botão OK
@@ -175,7 +179,18 @@ class GeneralTab(QWidget):
 ########################################################################################################################
 
 
-# Classe para configurações de customização do programa
+# Classe para exibir rapidamente uma mensagem para o modo dark.
+class BoxToolTip(QCheckBox):
+    def __init__(self, parent=None):
+        super(BoxToolTip, self).__init__(parent)
+        self.setMouseTracking(True)
+
+    def mouseMoveEvent(self, event):
+        pos = self.mapToGlobal(event.pos())
+        QToolTip.showText(pos, 'Effect on next program startup')
+
+
+# Classe para configurações de customização do programa.
 class CustomTab(QWidget):
     # Definição dos sinais a serem emitidos
     statusbar_emit = pyqtSignal()
@@ -199,6 +214,8 @@ class CustomTab(QWidget):
 
         # Opções para customizar a interface
         self.showStatus = QCheckBox('Show status bar')
+        self.darkMode = BoxToolTip('Dark mode')
+        self.darkMode.setFixedWidth(140)
         self.frameLabel = QLabel('Opacity:')
         self.frameSlider = QSlider(Qt.Horizontal)
         self.frameSlider.setRange(20, 100)
@@ -206,22 +223,32 @@ class CustomTab(QWidget):
         self.frameSlider.setTickPosition(QSlider.TicksAbove)
         self.frameSlider.setTickInterval(5)
 
-        # Verificando se o statusbar está ativado
+        # Verificando se o statusbar está ativo
         if set_json('StatusBar'):
             self.showStatus.setChecked(True)
 
+        # Verificando se o modo dark está ativo
+        if set_json('DarkMode'):
+            self.darkMode.setChecked(True)
+
         # Instruções para modificação dos valores
         self.showStatus.toggled.connect(self.setStatusBar)
+        self.darkMode.toggled.connect(self.setDarkMode)
         self.frameSlider.valueChanged.connect(self.setOpacity)
         self.fontSlider.valueChanged.connect(self.setSizeFont)
 
         # usando grid para uma melhor organização
         customLayout = QGridLayout()
         customLayout.addWidget(self.showStatus, 0, 0, 1, 2)
-        customLayout.addWidget(QLabel(''), 1, 0, 1, 2)
-        customLayout.addWidget(self.frameLabel, 2, 0)
-        customLayout.addWidget(self.frameSlider, 2, 1)
+        customLayout.addWidget(self.darkMode, 1, 0, 1, 2)
+        customLayout.addWidget(QLabel(''), 2, 0, 1, 2)
+        customLayout.addWidget(self.frameLabel, 3, 0)
+        customLayout.addWidget(self.frameSlider, 3, 1)
         customInterface.setLayout(customLayout)
+
+        # Não são todos os webapps que precisam do modo dark
+        if not enable_dark_mode_option:
+            self.darkMode.hide()
 
         # Layout para fonte
         fontLayout = QVBoxLayout()
@@ -249,6 +276,14 @@ class CustomTab(QWidget):
         self.statusbar_emit.emit()
 
 
+    # Alterar as opções do modo dark em 'settings.json'.
+    def setDarkMode(self):
+        if self.darkMode.isChecked():
+            write_json('DarkMode', True)
+        else:
+            write_json('DarkMode', False)
+
+
     # Alteração dos valores para opacidade em 'settings.json'.
     def setOpacity(self):
         write_json('Opacity', self.frameSlider.value())
@@ -260,6 +295,37 @@ class CustomTab(QWidget):
         self.font.setText('Size Font: ' + str(self.fontSlider.value()))
         write_json('SizeFont', self.fontSlider.value())
         self.font_emit.emit()
+
+
+########################################################################################################################
+
+
+# Classe para configuração de opções para mensagens de notificação.
+class NotifyTab(QWidget):
+    def __init__(self):
+        super(NotifyTab, self).__init__()
+
+        # Grupos para separar as opções
+        messageNotify = QGroupBox('Message options')
+        soundNotify = QGroupBox('Sound options')
+
+        # Opções para opções de notificação
+        self.optionMessage = QCheckBox('View notification messages')
+        self.optionSound = QCheckBox('Emit notification sounds')
+
+        # Definindo o layout para opções de mensagem
+        messageLayout = QGridLayout()
+        messageNotify.setLayout(messageLayout)
+
+        # Definindo o layout para opções de som
+        soundLayout = QGridLayout()
+        soundNotify.setLayout(soundLayout)
+
+        # Criando o layout
+        layout = QVBoxLayout()
+        layout.addWidget(messageNotify)
+        layout.addWidget(soundNotify)
+        self.setLayout(layout)
 
 
 ########################################################################################################################
