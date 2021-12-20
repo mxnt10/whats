@@ -283,7 +283,7 @@ class Browser(QWebEngineView):
         self.menuAbout = QAction('About')
 
         # Add functions for options menu
-        self.menuExternal.triggered.connect(self.external_browser)
+        self.menuExternal.triggered.connect(self.externalBrowser)
         self.menuLinkClip.triggered.connect(lambda: clipboard.setText(self.save_url, mode=clipboard.Clipboard))
         self.menuReload.triggered.connect(lambda: self.setUrl(QUrl(__url__)))  # Método melhor
         self.menuConfig.triggered.connect(self.showSettings)
@@ -304,7 +304,7 @@ class Browser(QWebEngineView):
 
 
     # Função para abrir um link num navegador externo.
-    def external_browser(self):
+    def externalBrowser(self):
         global cap_url
         if not cap_url:  # Garantindo que a variável vai ter o link para abrir
             cap_url = self.save_url
@@ -333,7 +333,7 @@ class Browser(QWebEngineView):
         if event.button() == Qt.LeftButton:
             # Vai ter clique direto, mas só vai funcionar essa opção com a captura de um link
             if cap_url and force_open_link:
-                self.external_browser()
+                self.externalBrowser()
         if event.button() == Qt.RightButton:
             self.save_url = cap_url  # Vai precisar salvar a url nessa variável para o menu de contexto
 
