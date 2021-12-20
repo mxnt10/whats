@@ -12,6 +12,8 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
  - Code:
     - Added application name.
     - Added notifications sound to new messages.
+    - Added options for notifications in settings.
+    - Added dark mode options for use in others webapps.
 ###
 
 ### Changed / Modificado
