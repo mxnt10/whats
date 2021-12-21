@@ -145,11 +145,20 @@ class MainWindow(QMainWindow):
                 self.statusBar().hide()
 
 
-    # Função que manipula o código-fonte do webapp para checar as mensagens não lidas, emitindo sons,
-    # exibindo mensagens e alterando o ícone de notificação.
-    def processHtml(self, html):
+    # Função para exibição de notificação.
+    def notifyMessage(self):
+        if self.soma > 1:
+            ms = 'Unread messages.'
+        else:
+            ms = 'Unread message.'
+        com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) +\
+              ' --icon="' + realpath(set_icon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
+        run(com, shell=True)
+
+
+    # Essa função pode variar conforme o webapp.
+    def verifyNotify(self, res):
         self.soma = 0
-        res = BeautifulSoup(html, 'html.parser')
         tags = res.findAll("div", {"class": "_1pJ9J"})
 
         for tag in tags:
@@ -161,6 +170,13 @@ class MainWindow(QMainWindow):
                 if set_json('NotifyMessage'):
                     self.notifyMessage()
             self.notify = self.soma  # Necessário para mapear alterações no número de mensagens
+
+
+    # Função que manipula o código-fonte do webapp para checar as mensagens não lidas, emitindo sons,
+    # exibindo mensagens e alterando o ícone de notificação.
+    def processHtml(self, html):
+        res = BeautifulSoup(html, 'html.parser')
+        self.verifyNotify(res)
         try:
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
                 if self.changeTray != 1:
@@ -176,17 +192,6 @@ class MainWindow(QMainWindow):
                     self.changeTray = 3
         except Exception as err:
             warning('\033[33m %s.\033[m', err)
-
-
-    # Função para exibição de notificação.
-    def notifyMessage(self):
-        if self.soma > 1:
-            ms = 'Unread messages.'
-        else:
-            ms = 'Unread message.'
-        com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) +\
-              ' --icon="' + realpath(set_icon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
-        run(com, shell=True)
 
 
     # Mostra os links ao passar o mouse sobre eles no statusBar e captura o link numa variável.
