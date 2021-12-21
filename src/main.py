@@ -4,8 +4,7 @@
 # Módulos importados
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
 from logging import warning
-from os.path import isfile, expanduser, realpath
-from subprocess import run
+from os.path import isfile, expanduser
 from sys import argv
 
 # Módulos do PyQt5
@@ -19,6 +18,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayI
 from about import AboutDialog
 from agent import user_agent, prevent
 from jsonTools import checkSettings, set_json, write_json
+from notify import verifyNotify
 from setting import SettingDialog
 from utils import set_icon, setSound
 from version import __appname__, __pagename__, __url__, __desktop__, __err__
@@ -145,38 +145,11 @@ class MainWindow(QMainWindow):
                 self.statusBar().hide()
 
 
-    # Função para exibição de notificação.
-    def notifyMessage(self):
-        if self.soma > 1:
-            ms = 'Unread messages.'
-        else:
-            ms = 'Unread message.'
-        com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) +\
-              ' --icon="' + realpath(set_icon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
-        run(com, shell=True)
-
-
-    # Essa função pode variar conforme o webapp.
-    def verifyNotify(self, res):
-        self.soma = 0
-        tags = res.findAll("div", {"class": "_1pJ9J"})
-
-        for tag in tags:
-            self.soma += int(tag.getText())  # Contabilizando o número de mensagens
-        if self.soma != self.notify and self.soma != 0:
-            if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
-                if set_json('NotifySound'):
-                    self.notify_sound.play()
-                if set_json('NotifyMessage'):
-                    self.notifyMessage()
-            self.notify = self.soma  # Necessário para mapear alterações no número de mensagens
-
-
     # Função que manipula o código-fonte do webapp para checar as mensagens não lidas, emitindo sons,
     # exibindo mensagens e alterando o ícone de notificação.
     def processHtml(self, html):
         res = BeautifulSoup(html, 'html.parser')
-        self.verifyNotify(res)
+        verifyNotify(self, res)
         try:
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
                 if self.changeTray != 1:
@@ -247,7 +220,7 @@ class MainWindow(QMainWindow):
 
         # Evitando que o programa minimize ao invés de maximizar
         if self.isMinimized():
-            for a in range(1, 10):
+            for a in range(1, 100):
                 self.show()
 
 

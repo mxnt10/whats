@@ -9,6 +9,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
  - Files and Sources:
     - Added RELEASE file.
     - Added mp3 files in sound folder.
+    - Created notify.py in src folder.
  - Code:
     - Added application name.
     - Added notifications sound to new messages.
