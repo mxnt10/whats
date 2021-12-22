@@ -196,6 +196,10 @@ class MainWindow(QMainWindow):
 
     # Minimizando para o system tray.
     def on_hide(self):
+        # Evitando que o programa minimize ao invés de maximizar ao reabri-lo
+        if self.isMinimized():
+            self.show()
+
         self.hide()
         self.trayMenu.clear()  # Alterando as opções do menu do tray icon
         self.trayMenu.addAction(self.trayShow)
@@ -217,11 +221,6 @@ class MainWindow(QMainWindow):
         self.trayMenu.clear()  # Alterando as opções do menu do tray icon
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
-
-        # Evitando que o programa minimize ao invés de maximizar
-        if self.isMinimized():
-            for a in range(1, 100):
-                self.show()
 
 
     # Evento ao fechar a janela.
