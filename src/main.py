@@ -20,7 +20,7 @@ from agent import user_agent, prevent
 from jsonTools import checkSettings, set_json, write_json
 from notify import verifyNotify
 from setting import SettingDialog
-from utils import set_icon, setSound
+from utils import setIcon, setSound
 from version import __appname__, __pagename__, __url__, __desktop__, __err__
 
 # Variáveis globais
@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
 
         # Propriedades gerais
         self.setWindowTitle(__pagename__)
-        self.setWindowIcon(QIcon(set_icon()))
+        self.setWindowIcon(QIcon(setIcon()))
         self.setMinimumSize(800, 600)
 
         # Definições para a visualização da página do webapp
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
 
         # Criando o tray icon
         self.tray = QSystemTrayIcon()
-        self.tray.setIcon(QIcon(set_icon('warning')))
+        self.tray.setIcon(QIcon(setIcon('warning')))
 
         # Itens para o menu do tray icon
         self.trayHide = QAction('Hide', self)
@@ -153,15 +153,15 @@ class MainWindow(QMainWindow):
         try:
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
                 if self.changeTray != 1:
-                    self.tray.setIcon(QIcon(set_icon('error')))
+                    self.tray.setIcon(QIcon(setIcon('error')))
                     self.changeTray = 1
             elif self.soma > 0:
                 if self.changeTray != 2:
-                    self.tray.setIcon(QIcon(set_icon('withmsg')))
+                    self.tray.setIcon(QIcon(setIcon('withmsg')))
                     self.changeTray = 2
             else:
                 if self.changeTray != 3:
-                    self.tray.setIcon(QIcon(set_icon('original')))
+                    self.tray.setIcon(QIcon(setIcon('original')))
                     self.changeTray = 3
         except Exception as err:
             warning('\033[33m %s.\033[m', err)

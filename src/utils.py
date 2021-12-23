@@ -15,7 +15,7 @@ from version import __dir__, __desktop__, __icon__
 
 
 # Define o ícone das aplicações.
-def set_icon(entry_icon=None):
+def setIcon(entry_icon=None):
 
     # Definição da localização dos ícones e de forma opcional, os ícones a serem usados
     if entry_icon is not None:
@@ -40,7 +40,7 @@ def set_icon(entry_icon=None):
 
 
 # Verifica a existência do arquivo whats.desktop no diretório autostart.
-def set_desktop():
+def setDesktop():
     orig = '/usr/share/applications/' + __desktop__
     dest = expanduser('~/.config/autostart')
     desk = dest + '/' + __desktop__

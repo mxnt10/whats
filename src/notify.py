@@ -6,7 +6,7 @@ from subprocess import run
 
 # Modulos integrados (src)
 from jsonTools import set_json
-from utils import set_icon
+from utils import setIcon
 from version import __pagename__
 
 
@@ -20,7 +20,7 @@ def notifyMessage(self):
     else:
         ms = 'Unread message.'
     com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) + \
-          ' --icon="' + realpath(set_icon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
+          ' --icon="' + realpath(setIcon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
     run(com, shell=True)
 
 

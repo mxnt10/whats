@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 
 # Modulos integrados (src)
-from utils import set_icon
+from utils import setIcon
 from version import __version__, __appname__, __pagename__
 
 
@@ -26,7 +26,7 @@ class AboutDialog(QDialog):
         font.setPointSize(20)
         title.setFont(font)
         logo = QLabel()
-        logo.setPixmap(QPixmap(set_icon('original')))
+        logo.setPixmap(QPixmap(setIcon('original')))
 
         # Layout com as informações
         layout = QVBoxLayout()
