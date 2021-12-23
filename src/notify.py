@@ -5,8 +5,11 @@ from os.path import realpath
 from subprocess import run
 
 # Modulos integrados (src)
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaContent
+
 from jsonTools import set_json
-from utils import setIcon
+from utils import setIcon, setSound
 from version import __pagename__
 
 
@@ -34,6 +37,7 @@ def verifyNotify(self, res):
     if self.soma != self.notify and self.soma != 0:
         if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
             if set_json('NotifySound'):
+                self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
                 self.notify_sound.play()
             if set_json('NotifyMessage'):
                 notifyMessage(self)
