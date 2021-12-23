@@ -10,7 +10,7 @@ from sys import argv
 # Módulos do PyQt5
 from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal
 from PyQt5.QtGui import QIcon, QDesktopServices
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction
 
@@ -20,7 +20,7 @@ from agent import user_agent, prevent
 from jsonTools import checkSettings, set_json, write_json
 from notify import verifyNotify
 from setting import SettingDialog
-from utils import setIcon, setSound
+from utils import setIcon
 from version import __appname__, __pagename__, __url__, __desktop__, __err__
 
 # Variáveis globais
@@ -43,9 +43,8 @@ class MainWindow(QMainWindow):
         if set_json('SizeFont') is None:
             write_json('SizeFont', float(str(self.font().key()).split(',')[1]))
 
-        # Definindo o som de notificação
+        # Para o som de notificação
         self.notify_sound = QMediaPlayer()
-        self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
 
         # Loop para a verificação de novas mensagens
         self.notify_loop = QTimer()
