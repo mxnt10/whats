@@ -2,8 +2,8 @@
 
 # Módulos importados
 from logging import warning, error
-from os import remove
-from os.path import expanduser, isfile, realpath
+from os import remove, walk
+from os.path import expanduser, isfile, realpath, isdir
 from shutil import copy
 
 # Modulos integrados (src)
@@ -70,3 +70,16 @@ def setSound(sound):
     except Exception as msg:
         warning('\033[33m %s.\033[32m Use a local sound folder...\033[m', msg)
         return l_dirSound
+
+
+# Cria uma lista com as opções de temas de som.
+def listSound():
+    res = []
+    dirSound = __dir__ + '/sound/'
+    if not isdir(dirSound):
+        dirSound = '../sound'
+
+    for directory, subdir, files in walk(dirSound):
+        for file in files:
+            res.append(file.split('.')[0])
+        return res
