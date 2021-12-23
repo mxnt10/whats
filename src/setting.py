@@ -3,11 +3,12 @@
 # Módulos do PyQt5
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget, QWidget, QGroupBox, QCheckBox,
-                             QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy, QToolTip)
+                             QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy, QToolTip, QSpinBox,
+                             QComboBox)
 
 # Modulos integrados (src)
 from jsonTools import set_json, write_json
-from utils import set_desktop
+from utils import setDesktop, listSound
 
 # Variáveis globais
 enable_dark_mode_option = False
@@ -149,7 +150,7 @@ class GeneralTab(QWidget):
             write_json('AutoStart', True)
         else:
             write_json('AutoStart', False)
-        st = set_desktop()
+        st = setDesktop()
         if not st:  # Prevenindo caso o arquivo desktop não exista
             self.autoStart.setChecked(False)
 
@@ -313,6 +314,24 @@ class NotifyTab(QWidget):
         self.optionMessage = QCheckBox('View notification messages')
         self.optionSound = QCheckBox('Emit notification sounds')
 
+        # Tempo de exibição de notificação
+        self.timeMessage = QSpinBox()
+        self.timeMessage.setFixedWidth(60)
+        self.timeMessage.setMinimum(2)
+        self.timeMessage.setMaximum(15)
+        self.timeMessage.setValue(set_json('TimeMessage') / 1000)
+        self.timeMessage.valueChanged.connect(lambda: write_json('TimeMessage', self.timeMessage.value() * 1000))
+        labelMessage = QLabel('Showtime (s):')
+        labelMessage.setAlignment(Qt.AlignRight)
+
+        # Temas para o som de notificação
+        self.soundTheme = QComboBox()
+        labelSound = QLabel('Sound Theme:')
+        labelSound.setAlignment(Qt.AlignRight)
+        self.soundTheme.addItems(listSound())
+        self.soundTheme.setCurrentIndex(listSound().index(set_json('SoundTheme')))
+        self.soundTheme.currentIndexChanged.connect(lambda: write_json('SoundTheme', self.soundTheme.currentText()))
+
         # Verificando se o statusbar está ativo
         if set_json('NotifyMessage'):
             self.optionMessage.setChecked(True)
@@ -327,12 +346,16 @@ class NotifyTab(QWidget):
 
         # Definindo o layout para opções de mensagem
         messageLayout = QGridLayout()
-        messageLayout.addWidget(self.optionMessage)
+        messageLayout.addWidget(self.optionMessage, 0, 0, 1, 5)
+        messageLayout.addWidget(labelMessage, 1, 0)
+        messageLayout.addWidget(self.timeMessage, 1, 1)
         messageNotify.setLayout(messageLayout)
 
         # Definindo o layout para opções de som
         soundLayout = QGridLayout()
-        soundLayout.addWidget(self.optionSound)
+        soundLayout.addWidget(self.optionSound, 0, 0, 1, 4)
+        soundLayout.addWidget(labelSound, 1, 0)
+        soundLayout.addWidget(self.soundTheme, 1, 1)
         soundNotify.setLayout(soundLayout)
 
         # Criando o layout
@@ -346,12 +369,15 @@ class NotifyTab(QWidget):
 ########################################################################################################################
 
 
+    # Alterando as opções de mensagens de notificação em 'settings.json'.
     def setNotifyMessage(self):
         if self.optionMessage.isChecked():
             write_json('NotifyMessage', True)
         else:
             write_json('NotifyMessage', False)
 
+
+    # Alterando as opções de som de notificação em 'settings.json'.
     def setNotifySound(self):
         if self.optionSound.isChecked():
             write_json('NotifySound', True)
@@ -366,17 +392,32 @@ class NotifyTab(QWidget):
 class NetworkTab(QWidget):
     def __init__(self):
         super(NetworkTab, self).__init__()
+
+        # Opção de autorreconexão
         connect = QGroupBox('Connection')
         self.autoReload = QCheckBox('Reload automatically in case of connection fail')
         self.autoReload.toggled.connect(self.setAutoReload)
+
+        # Definindo opções para o tempo de reconexão
+        self.timeReload = QSpinBox()
+        self.timeReload.setFixedWidth(60)
+        self.timeReload.setMinimum(2)
+        self.timeReload.setMaximum(15)
+        self.timeReload.setValue(set_json('TimeReload') / 1000)
+        self.timeReload.valueChanged.connect(lambda: write_json('TimeReload', self.timeReload.value() * 1000))
+        labelReoad = QLabel('Time interval when reloading (s):')
+        labelReoad.setAlignment(Qt.AlignRight)
 
         # Verificando se a opção autoreload está ativa para setar o check box
         if set_json('AutoReload'):
             self.autoReload.setChecked(True)
 
         # Definindo o layout
-        startLayout = QVBoxLayout()
-        startLayout.addWidget(self.autoReload)
+        startLayout = QGridLayout()
+        startLayout.addWidget(self.autoReload, 0, 0, 1, 3)
+        startLayout.addWidget(QLabel(''), 1, 0, 1, 2)
+        startLayout.addWidget(labelReoad, 2, 0)
+        startLayout.addWidget(self.timeReload, 2, 1)
         connect.setLayout(startLayout)
 
         # Criando o layout
