@@ -3,6 +3,7 @@
 
 # Módulos importados
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
+from locale import getdefaultlocale
 from logging import warning
 from os.path import isfile, expanduser
 from sys import argv
@@ -11,7 +12,8 @@ from sys import argv
 from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings
+from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings,
+                                      QWebEngineProfile)
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction
 
 # Modulos integrados (src)
@@ -148,8 +150,9 @@ class MainWindow(QMainWindow):
     # exibindo mensagens e alterando o ícone de notificação.
     def processHtml(self, html):
         res = BeautifulSoup(html, 'html.parser')
-        verifyNotify(self, res)
         try:
+            if not __err__ in res.title:
+                verifyNotify(self, res)
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
                 if self.changeTray != 1:
                     self.tray.setIcon(QIcon(setIcon('error')))
@@ -373,6 +376,8 @@ if __name__ == '__main__':
     # Inicialização do programa
     app = QApplication(argv + arg)
     app.setApplicationName(__appname__)
+    lang = getdefaultlocale()[0]
+    QWebEngineProfile.defaultProfile().setHttpAcceptLanguage(lang.split('_')[0])
     clipboard = app.clipboard()
     main = MainWindow()
 
