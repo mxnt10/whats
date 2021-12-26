@@ -30,10 +30,8 @@ def notifyMessage(self):
 # Essa função pode variar conforme o webapp.
 def verifyNotify(self, res):
     self.soma = 0
-    tags = res.findAll("div", {"class": "_1pJ9J"})
-
-    for tag in tags:
-        self.soma += int(tag.getText())  # Contabilizando o número de mensagens
+    for tag in res.findAll('div', {'class': '_1pJ9J'}):
+        self.soma += int(tag.getText())
     if self.soma != self.notify and self.soma != 0:
         if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
             if set_json('NotifySound'):
@@ -41,4 +39,4 @@ def verifyNotify(self, res):
                 self.notify_sound.play()
             if set_json('NotifyMessage'):
                 notifyMessage(self)
-        self.notify = self.soma  # Necessário para mapear alterações no número de
+        self.notify = self.soma  # Necessário para mapear alterações no número de notificações
