@@ -177,20 +177,21 @@ class MainWindow(QMainWindow):
         cap_url = link  # O link precisa ser salvo numa variável, pois o link é perdido ao tirar o mouse de cima
 
 
-    # Ativar a reconexão WhatsApp Web pela alteração do título.
+    # Ações após finalizar o carregamento do webapp.
     def loaded(self):
         if self.view.page().title() == __err__:  # Se der erro de conexão o título inicial não muda
             if not self.reload_start and set_json('AutoReload'):  # Autorreconexão
                 self.reload.start()
                 self.notify = self.changeTray = 0
                 self.reload_start = True
-                if self.notify_start:  # Notificação pode ser desativada para economizar recursos de processamento
-                    self.notify_loop.stop()
-                    self.notify_start = False
+            if self.notify_start:  # Notificação pode ser desativada para economizar recursos de processamento
+                self.notify_loop.stop()
+                self.tray.setIcon(QIcon(setIcon('error')))
         else:
             if self.reload_start:  # Ao voltar a conexão o loop deve parar
                 self.reload.stop()
                 self.reload_start = False
+                self.notify_start = False
         if not self.notify_start and set_json('TrayIcon'):  # Ativa o som de notificação
             self.notify_loop.start()
             self.notify_start = True  # Não precisa ficar reativando o som cada vez que o webapp é recarregado
