@@ -29,6 +29,7 @@ default_js = {
   "Opacity": 100,
   "SizeFont": None,
   "AutoReload": False,
+  "CheckUpdate": False,
   "TimeReload": 2000
 }
 
