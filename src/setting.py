@@ -395,8 +395,11 @@ class NetworkTab(QWidget):
 
         # Opção de autorreconexão
         connect = QGroupBox('Connection')
+        update = QGroupBox('Update')
         self.autoReload = QCheckBox('Reload automatically in case of connection fail')
         self.autoReload.toggled.connect(self.setAutoReload)
+        self.checkUpdate = QCheckBox('Check updates on startup')
+        self.checkUpdate.toggled.connect(self.setCheckUpdate)
 
         # Definindo opções para o tempo de reconexão
         self.timeReload = QSpinBox()
@@ -408,11 +411,16 @@ class NetworkTab(QWidget):
         labelReoad = QLabel('Time interval when reloading (s):')
         labelReoad.setAlignment(Qt.AlignRight)
 
+        # Definindo layout para checagem de atualização
+        self.layoutUpdate = QVBoxLayout()
+        self.layoutUpdate.addWidget(self.checkUpdate)
+        update.setLayout(self.layoutUpdate)
+
         # Verificando se a opção autoreload está ativa para setar o check box
         if set_json('AutoReload'):
             self.autoReload.setChecked(True)
 
-        # Definindo o layout
+        # Definindo o layout de reconexão
         startLayout = QGridLayout()
         startLayout.addWidget(self.autoReload, 0, 0, 1, 3)
         startLayout.addWidget(QLabel(''), 1, 0, 1, 2)
@@ -423,6 +431,7 @@ class NetworkTab(QWidget):
         # Criando o layout
         layout = QVBoxLayout()
         layout.addWidget(connect)
+        layout.addWidget(update)
         layout.addItem(QSpacerItem(1, 1, QSizePolicy.Minimum, QSizePolicy.Expanding))  # Espaço por precaução
         self.setLayout(layout)
 
@@ -433,3 +442,11 @@ class NetworkTab(QWidget):
             write_json('AutoReload', True)
         else:
             write_json('AutoReload', False)
+
+
+    # Definindo opção para checagem de atualização em 'settings.json'.
+    def setCheckUpdate(self):
+        if self.checkUpdate.isChecked():
+            write_json('CheckUpdate', True)
+        else:
+            write_json('CheckUpdate', False)

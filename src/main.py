@@ -7,6 +7,7 @@ from locale import getdefaultlocale
 from logging import warning
 from os.path import isfile, expanduser
 from sys import argv
+from threading import Thread
 
 # Módulos do PyQt5
 from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal
@@ -22,7 +23,7 @@ from agent import user_agent, prevent
 from jsonTools import checkSettings, set_json, write_json
 from notify import verifyNotify
 from setting import SettingDialog
-from utils import setIcon
+from utils import setIcon, checkUpdate
 from version import __appname__, __pagename__, __url__, __desktop__, __err__
 
 # Variáveis globais
@@ -38,7 +39,7 @@ force_open_link = True
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.start = self.notify_start = self.reload_start = False
+        self.start = self.notify_start = self.reload_start = self.ckUpdate = False
         self.notify = self.changeTray = self.soma = 0
 
         # Pega o tamanho da fonte na primeira inicialização
@@ -78,13 +79,9 @@ class MainWindow(QMainWindow):
         self.changeOpacity()
         self.changeFont()
 
-        # Ativando tudo o que tiver de direito
-        self.view.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-        self.view.settings().setAttribute(QWebEngineSettings.AutoLoadImages, True)
-        self.view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
-
         # Criando o tray icon
         self.tray = QSystemTrayIcon()
+        self.tray.activated.connect(self.onTrayIconActivated)
         self.tray.setIcon(QIcon(setIcon('warning')))
 
         # Itens para o menu do tray icon
@@ -195,6 +192,10 @@ class MainWindow(QMainWindow):
         if not self.notify_start and set_json('TrayIcon'):  # Ativa o som de notificação
             self.notify_loop.start()
             self.notify_start = True  # Não precisa ficar reativando o som cada vez que o webapp é recarregado
+        if set_json('CheckUpdate') and not self.ckUpdate:
+            t = Thread(name='update', target=checkUpdate, args=(self, 1))
+            t.start()
+            self.ckUpdate = True
 
 
     # Minimizando para o system tray.
@@ -226,6 +227,15 @@ class MainWindow(QMainWindow):
         self.trayMenu.addAction(self.trayExit)
 
 
+    # Evento para mostrar e ocultar a janela com apenas um clique no tray icon.
+    def onTrayIconActivated(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            if self.isHidden():
+                self.on_show()
+            else:
+                self.on_hide()
+
+
     # Evento ao fechar a janela.
     def closeEvent(self, event):
         event.ignore()  # Precisa
@@ -250,6 +260,11 @@ class Browser(QWebEngineView):
         super().__init__()
         self.menu = QMenu()  # Para criar o menu de contexto
         self.save_url = None
+
+        # Ativando tudo o que tiver de direito
+        self.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+        self.settings().setAttribute(QWebEngineSettings.AutoLoadImages, True)
+        self.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
 
         # Necessary to map mouse event
         QApplication.instance().installEventFilter(self)

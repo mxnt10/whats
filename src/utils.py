@@ -4,11 +4,18 @@
 from logging import warning, error
 from os import remove, walk
 from os.path import expanduser, isfile, realpath, isdir
+from subprocess import run
+from requests import get
+from soupsieve.util import lower
 from shutil import copy
+
+# Módulos do Qt5
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaContent
 
 # Modulos integrados (src)
 from jsonTools import set_json, write_json
-from version import __dir__, __desktop__, __icon__
+from version import __dir__, __desktop__, __icon__, __version__, __appname__
 
 
 ########################################################################################################################
@@ -83,3 +90,22 @@ def listSound():
         for file in files:
             res.append(file.split('.')[0])
         return res
+
+
+# Função que verifica se há atualizações disponíveis
+def checkUpdate(self, num):
+    try:
+        res = get('https://raw.githubusercontent.com/mxnt10/' + lower(__appname__) + '/master/RELEASE')
+        if res.status_code != 200:
+            raise ValueError('Connection fail, ' + str(res.status_code))
+
+        new_ver = res.text.split("\n")
+        if new_ver[0] != str(__version__):
+            com = 'notify-send --app-name="' + __appname__ + ' - Update available" --expire-time=' +\
+                  str(set_json('TimeMessage')) + ' "A new version is available.\nNew version: ' + new_ver[0] + '"'
+            run(com, shell=True)
+            self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
+            self.notify_sound.play()
+
+    except ValueError as msg:
+        error("\033[33m Update check failed.\033[31m %s \033[m", msg)
