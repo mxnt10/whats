@@ -9,10 +9,15 @@ Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
 ### Required packages
 
 - python >= 3.6
+- libnotify (notify-send) >= 0.7.9
+
+### Required python modules
+
+- beautifulsoup4 >= 4.10.0
 - PyQt5 >= 5.15.2
 - PyQtWebEngine >= 5.15.2
-- beautifulsoup4 >= 4.10.0
-- libnotify (notify-send) >= 0.7.9
+- requests >= 2.25.1
+- soupsieve >= 2.3.1
 
 ### Installation instructions
 
