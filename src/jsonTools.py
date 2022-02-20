@@ -23,7 +23,7 @@ default_js = {
   "DarkMode": False,
   "NotifyMessage": False,
   "NotifySound": False,
-  "VerifyNotify": 200,
+  "VerifyNotify": 800,
   "TimeMessage": 5000,
   "SoundTheme": "message",
   "Opacity": 100,
