@@ -10,7 +10,7 @@ from sys import argv
 from threading import Thread
 
 # Módulos do PyQt5
-from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal
+from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal, QTranslator
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings,
@@ -39,6 +39,7 @@ force_open_link = True
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.textUpdate1 = self.textUpdate2 = self.textUpdate3 = self.message1 = self.message2 = self.res = None
         self.start = self.notify_start = self.reload_start = self.ckUpdate = False
         self.notify = self.changeTray = self.soma = 0
 
@@ -85,9 +86,9 @@ class MainWindow(QMainWindow):
         self.tray.setIcon(QIcon(setIcon('warning')))
 
         # Itens para o menu do tray icon
-        self.trayHide = QAction('Hide', self)
-        self.trayShow = QAction('Show', self)
-        self.trayExit = QAction('Exit', self)
+        self.trayHide = QAction(self.tr('Hide'), self)
+        self.trayShow = QAction(self.tr('Show'), self)
+        self.trayExit = QAction(self.tr('Exit'), self)
 
         # Funções para as opções do menu do tray icon
         self.trayHide.triggered.connect(self.on_hide)
@@ -143,10 +144,10 @@ class MainWindow(QMainWindow):
                 self.statusBar().hide()
 
 
-    # Função que manipula o código-fonte do webapp para checar as mensagens não lidas, emitindo sons,
-    # exibindo mensagens e alterando o ícone de notificação.
-    def processHtml(self, htm):
-        res = BeautifulSoup(htm, 'html.parser')
+    # Função que possui o objetivo de ser executada como um thead independentepara resolver problemas
+    # de lentidão durante o uso do webapp.
+    def bs(self, htm, parser):
+        res = BeautifulSoup(htm, parser)
         try:
             if not __err__ in res.title:
                 verifyNotify(self, res)
@@ -164,6 +165,15 @@ class MainWindow(QMainWindow):
                     self.changeTray = 3
         except Exception as err:
             warning('\033[33m %s.\033[m', err)
+
+
+    # Função que manipula o código-fonte do webapp para a checagem das mensagens não lidas, emitindo sons,
+    # exibindo mensagens e alterando o ícone de notificação.
+    def processHtml(self, htm):
+        self.message1 = self.tr('Unread messages.')  # Textos definidos aqui por conta da tradução
+        self.message2 = self.tr('Unread message.')
+        t = Thread(name='scratch', target=self.bs, args=(htm, 'html.parser'))
+        t.start()
 
 
     # Mostra os links ao passar o mouse sobre eles no statusBar e captura o link numa variável.
@@ -193,6 +203,9 @@ class MainWindow(QMainWindow):
             self.notify_loop.start()
             self.notify_start = True  # Não precisa ficar reativando o som cada vez que o webapp é recarregado
         if set_json('CheckUpdate') and not self.ckUpdate:
+            self.textUpdate1 = self.tr('Update available')  # Textos definidos aqui por conta da tradução
+            self.textUpdate2 = self.tr('A new version is available')
+            self.textUpdate3 = self.tr('New version')
             t = Thread(name='update', target=checkUpdate, args=(self, 1))
             t.start()
             self.ckUpdate = True
@@ -271,11 +284,11 @@ class Browser(QWebEngineView):
         self.setMouseTracking(True)
 
         # Define items for create custom menu
-        self.menuExternal = QAction('Open link in the browser')
-        self.menuLinkClip = QAction('Copy link to clipboard')
-        self.menuReload = QAction('Reload')
-        self.menuConfig = QAction('Preferencies')
-        self.menuAbout = QAction('About')
+        self.menuExternal = QAction(self.tr('Open link in the browser'))
+        self.menuLinkClip = QAction(self.tr('Copy link to clipboard'))
+        self.menuReload = QAction(self.tr('Reload'))
+        self.menuConfig = QAction(self.tr('Preferencies'))
+        self.menuAbout = QAction(self.tr('About'))
 
         # Add functions for options menu
         self.menuExternal.triggered.connect(self.externalBrowser)
@@ -357,7 +370,7 @@ class WhatsApp(QWebEnginePage):
     def download(self, download):
         old_path = download.path()
         suffix = QFileInfo(old_path).suffix()
-        path = QFileDialog.getSaveFileName(self.view(), "Save File", old_path, "*." + suffix)[0]
+        path = QFileDialog.getSaveFileName(self.view(), self.tr("Save File"), old_path, "*." + suffix)[0]
         if path:
             download.setPath(path)
             download.accept()
@@ -395,6 +408,9 @@ if __name__ == '__main__':
     lang = getdefaultlocale()[0]
     QWebEngineProfile.defaultProfile().setHttpAcceptLanguage(lang.split('_')[0])
     clipboard = app.clipboard()
+    translate = QTranslator()
+    translate.load('../translate/whats_' + lang.split('_')[0] + '.qm')
+    app.installTranslator(translate)
     main = MainWindow()
 
     # Definindo como o programa será aberto
