@@ -92,7 +92,17 @@ def listSound():
         return res
 
 
-# Função que verifica se há atualizações disponíveis
+# Verificar localização dos arquivos de tradução.
+def setTranslate():
+    dirTranslate = '../translate'
+    if not isdir(dirTranslate):
+        dirTranslate = __dir__ + '/translate/'
+    else:
+        warning('\033[32m Using a local translate folder...\033[m')
+    return dirTranslate
+
+
+# Função que verifica se há atualizações disponíveis.
 def checkUpdate(self, num):
     """
     :param self: parâmetro self.
