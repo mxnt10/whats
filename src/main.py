@@ -11,11 +11,11 @@ from threading import Thread
 
 # Módulos do PyQt5
 from PyQt5.QtCore import QUrl, QFileInfo, pyqtSlot, QMargins, Qt, QEvent, QTimer, pyqtSignal, QTranslator
-from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtGui import QIcon, QDesktopServices, QKeySequence
 from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage, QWebEngineDownloadItem, QWebEngineSettings,
                                       QWebEngineProfile)
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QSystemTrayIcon, QMenu, QAction, QShortcut
 
 # Modulos integrados (src)
 from about import AboutDialog
@@ -80,6 +80,14 @@ class MainWindow(QMainWindow):
         self.changeOpacity()
         self.changeFont()
 
+        # Teclas de atalho
+        self.shortcut1 = QShortcut(QKeySequence(Qt.ControlModifier + Qt.Key_R), self)
+        self.shortcut1.activated.connect(lambda: self.view.load(QUrl(__url__)))
+        self.shortcut2 = QShortcut(QKeySequence(Qt.ControlModifier + Qt.Key_Q), self)
+        self.shortcut2.activated.connect(app.quit)
+        self.shortcut3 = QShortcut(QKeySequence(Qt.AltModifier + Qt.Key_S), self)
+        self.shortcut3.activated.connect(self.view.showSettings)
+
         # Criando o tray icon
         self.tray = QSystemTrayIcon()
         self.tray.activated.connect(self.onTrayIconActivated)
@@ -89,6 +97,12 @@ class MainWindow(QMainWindow):
         self.trayHide = QAction(self.tr('Hide'), self)
         self.trayShow = QAction(self.tr('Show'), self)
         self.trayExit = QAction(self.tr('Exit'), self)
+
+        # Ícones para o menu do tray icon
+        self.trayHide.setIcon(QIcon.fromTheme('go-down'))
+        self.trayShow.setIcon(QIcon.fromTheme('go-up'))
+        self.trayExit.setIcon(QIcon.fromTheme('application-exit'))
+        self.trayExit.setShortcut('Ctrl+Q')
 
         # Funções para as opções do menu do tray icon
         self.trayHide.triggered.connect(self.on_hide)
@@ -279,18 +293,29 @@ class Browser(QWebEngineView):
         self.settings().setAttribute(QWebEngineSettings.AutoLoadImages, True)
         self.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
 
-        # Necessary to map mouse event
+        # Necessário para maear os eventos de mouse
         QApplication.instance().installEventFilter(self)
         self.setMouseTracking(True)
 
-        # Define items for create custom menu
+        # Definindo itens para a criação do menu
         self.menuExternal = QAction(self.tr('Open link in the browser'))
         self.menuLinkClip = QAction(self.tr('Copy link to clipboard'))
         self.menuReload = QAction(self.tr('Reload'))
         self.menuConfig = QAction(self.tr('Preferencies'))
         self.menuAbout = QAction(self.tr('About'))
 
-        # Add functions for options menu
+        # Ícones para o menu
+        self.menuExternal.setIcon(QIcon.fromTheme('globe'))
+        self.menuLinkClip.setIcon(QIcon.fromTheme('edit-copy'))
+        self.menuReload.setIcon(QIcon.fromTheme('view-refresh'))
+        self.menuConfig.setIcon(QIcon.fromTheme('configure'))
+        self.menuAbout.setIcon(QIcon.fromTheme('help-about'))
+
+        # Teclas de atalho
+        self.menuReload.setShortcut('Ctrl+R')
+        self.menuConfig.setShortcut('Alt+S')
+
+        # Adicionar funções para as opções de menu
         self.menuExternal.triggered.connect(self.externalBrowser)
         self.menuLinkClip.triggered.connect(lambda: clipboard.setText(self.save_url, mode=clipboard.Clipboard))
         self.menuReload.triggered.connect(lambda: self.setUrl(QUrl(__url__)))  # Método melhor
