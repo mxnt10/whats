@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm -r ~/.config/Whats
-rm -r ~/.local/share/Whats
+rm -rf ~/.config/Whats
+rm -rf ~/.local/share/Whats
