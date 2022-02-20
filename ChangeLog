@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 2.3 ] - 2022-02-20 #############################################
+
+### Added / Adicionado
+ - Translator Support.
+###
+
+### Changed / Modificado
+ - Changed install.sh for start webapp using nvidia driver.
+ - Search for new messages every 800 ms.
+ - Search for new messages in a new process using multitreading.
+###
+
+### Fixed / Corrigido
+ - Fixed settings for select checkbox to check update.
+###
+
+#####################################################################
+
+
 ## [ 2.2 ] - 2022-01-08 #############################################
 
 ### Added / Adicionado

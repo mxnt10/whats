@@ -17,7 +17,7 @@ from version import __version__, __appname__, __pagename__
 class AboutDialog(QDialog):
     def __init__(self):
         super(AboutDialog, self).__init__()
-        self.setWindowTitle('About ' + __appname__)
+        self.setWindowTitle(self.tr('About') + ' ' + __appname__)
         self.setFixedSize(0, 0)
 
         # Título e Logo
@@ -32,10 +32,10 @@ class AboutDialog(QDialog):
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(logo)
-        layout.addWidget(QLabel('Version ' + __version__ + '\n'))
-        layout.addWidget(QLabel('Maintainer: Mauricio Ferrari'))
-        layout.addWidget(QLabel('Contact: m10ferrari1200@gmail.com'))
-        layout.addWidget(QLabel('License: GNU General Public License Version 3 (GLPv3)\n'))
+        layout.addWidget(QLabel(self.tr('Version') + ' ' + __version__ + '\n'))
+        layout.addWidget(QLabel(self.tr('Maintainer') + ': Mauricio Ferrari'))
+        layout.addWidget(QLabel(self.tr('Contact') + ': m10ferrari1200@gmail.com'))
+        layout.addWidget(QLabel(self.tr('License') + ': GNU General Public License Version 3 (GLPv3)\n'))
 
         for i in range(0, layout.count()):  # Definindo os widgets no centro
             layout.itemAt(i).setAlignment(Qt.AlignHCenter)

@@ -94,6 +94,10 @@ def listSound():
 
 # Função que verifica se há atualizações disponíveis
 def checkUpdate(self, num):
+    """
+    :param self: parâmetro self.
+    :type num: só está aí por conta do multiprocessamento.
+    """
     try:
         res = get('https://raw.githubusercontent.com/mxnt10/' + lower(__appname__) + '/master/RELEASE')
         if res.status_code != 200:
@@ -101,8 +105,9 @@ def checkUpdate(self, num):
 
         new_ver = res.text.split("\n")
         if new_ver[0] != str(__version__):
-            com = 'notify-send --app-name="' + __appname__ + ' - Update available" --expire-time=' +\
-                  str(set_json('TimeMessage')) + ' "A new version is available.\nNew version: ' + new_ver[0] + '"'
+            com = 'notify-send --app-name="' + __appname__ + ' - ' + self.textUpdate1 + '" --expire-time=' +\
+                  str(set_json('TimeMessage')) + ' "' + self.textUpdate2 + '.\n' + self.textUpdate3 +\
+                  ': ' + new_ver[0] + '"'
             run(com, shell=True)
             self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
             self.notify_sound.play()

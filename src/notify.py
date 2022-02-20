@@ -19,9 +19,9 @@ from version import __pagename__
 # Função para exibição de notificação.
 def notifyMessage(self):
     if self.soma > 1:
-        ms = 'Unread messages.'
+        ms = self.message1
     else:
-        ms = 'Unread message.'
+        ms = self.message2
     com = 'notify-send --app-name="' + __pagename__ + '" --expire-time=' + str(set_json('TimeMessage')) + \
           ' --icon="' + realpath(setIcon('notify')) + '" "' + str(self.soma) + ' ' + ms + '"'
     run(com, shell=True)
