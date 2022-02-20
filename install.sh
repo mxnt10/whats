@@ -21,7 +21,12 @@ cp -Tr src "$install_root"/usr/share/"$PRGNAM"
 
 echo "#!/bin/bash
 cd /usr/share/$PRGNAM
-python3 main.py" > "$install_root"/usr/bin/"$PRGNAM"
+
+[ \"\$(grep -E \"nouveau|nvidia\" <(lsmod))\" ] && {
+    LIBGL_ALWAYS_SOFTWARE=1 python3 main.py
+} || {
+    python3 main.py
+}" > "$install_root"/usr/bin/"$PRGNAM"
 
 chmod 755 "$install_root"/usr/bin/"$PRGNAM"
 exit 0
