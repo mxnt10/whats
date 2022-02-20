@@ -96,7 +96,7 @@ def listSound():
 def setTranslate():
     dirTranslate = '../translate'
     if not isdir(dirTranslate):
-        dirTranslate = __dir__ + '/translate/'
+        dirTranslate = __dir__ + '/translate'
     else:
         warning('\033[32m Using a local translate folder...\033[m')
     return dirTranslate
