@@ -13,7 +13,7 @@ from version import __appname__
 
 
 # Link para pegar o userAgent: http://httpbin.org/user-agent
-user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'
+user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36'
 
 
 # A ideia dessa função é prevenir a mensagem de novegador desatualizado mesmo que o agent user seja utilizado.
