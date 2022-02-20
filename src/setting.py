@@ -94,10 +94,15 @@ class GeneralTab(QWidget):
         if set_json('TrayIcon'):
             self.showTray.setChecked(True)
 
+        # Messagens para os radio buttons
+        self.msg_show = self.tr('Standard startup')
+        self.msg_max = self.tr('Open maximized')
+        self.msg_min = self.tr('Open minimized to system tray')
+
         # Opções de inicialização
-        self.showDefault = QRadioButton(self.tr('Standard startup'))
-        self.showMaximize = QRadioButton(self.tr('Open maximized'))
-        self.showMinimize = QRadioButton(self.tr('Open minimized to system tray'))
+        self.showDefault = QRadioButton(self.msg_show)
+        self.showMaximize = QRadioButton(self.msg_max)
+        self.showMinimize = QRadioButton(self.msg_min)
 
         # definir seleção para inicialização
         if set_json('StartUp') == 'Normal':
