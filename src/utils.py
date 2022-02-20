@@ -68,15 +68,20 @@ def setDesktop():
 
 # Busca por arquivos de áudio que servirão como tema das mensagens de notificação.
 def setSound(sound):
-    dirSound = __dir__ + '/sound/' + sound + '.mp3'
-    l_dirSound = realpath('../sound/' + sound + '.mp3')  # O realpath é necessário para funcionar no QMediaPlayer
+    dirSound = __dir__ + '/sound/' + sound
+    l_dirSound = realpath('../sound/' + sound)  # O realpath é necessário para funcionar no QMediaPlayer
 
-    try:
-        with open(dirSound):
-            return dirSound  # Esse aqui não precisa realpath, pois é caminho absoluto
-    except Exception as msg:
-        warning('\033[33m %s.\033[32m Use a local sound folder...\033[m', msg)
-        return l_dirSound
+    for ext in ['.mp3', '.wav']:
+        try:
+            with open(dirSound + ext):
+                return dirSound + ext  # Esse aqui não precisa realpath, pois é caminho absoluto
+        except Exception as msg:
+            warning('\033[33m %s.\033[32m Use a local sound folder...\033[m', msg)
+            try:
+                with open(l_dirSound + ext):
+                    return l_dirSound + ext
+            except Exception as msg:
+                warning('\033[33m %s.\033[32m Use a other option...\033[m', msg)
 
 
 # Cria uma lista com as opções de temas de som.
