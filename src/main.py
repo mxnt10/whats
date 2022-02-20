@@ -23,7 +23,7 @@ from agent import user_agent, prevent
 from jsonTools import checkSettings, set_json, write_json
 from notify import verifyNotify
 from setting import SettingDialog
-from utils import setIcon, checkUpdate
+from utils import setIcon, checkUpdate, setTranslate
 from version import __appname__, __pagename__, __url__, __desktop__, __err__
 
 # Variáveis globais
@@ -409,7 +409,7 @@ if __name__ == '__main__':
     QWebEngineProfile.defaultProfile().setHttpAcceptLanguage(lang.split('_')[0])
     clipboard = app.clipboard()
     translate = QTranslator()
-    translate.load('../translate/whats_' + lang.split('_')[0] + '.qm')
+    translate.load(setTranslate() + '/whats_' + lang.split('_')[0] + '.qm')
     app.installTranslator(translate)
     main = MainWindow()
 
