@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 # Módulos do PyQt5
-from PyQt5.QtCore import QEvent, Qt, pyqtSignal
+from PyQt5.QtCore import QEvent, Qt, pyqtSignal, QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QTabWidget, QWidget, QGroupBox, QCheckBox,
                              QRadioButton, QSlider, QGridLayout, QLabel, QSpacerItem, QSizePolicy, QToolTip, QSpinBox,
-                             QComboBox)
+                             QComboBox, QToolButton, QStyle)
 
 # Modulos integrados (src)
 from jsonTools import set_json, write_json
-from utils import setDesktop, listSound
+from utils import setDesktop, listSound, setSound
 
 # Variáveis globais
 enable_dark_mode_option = False
@@ -302,6 +303,9 @@ class NotifyTab(QWidget):
     def __init__(self):
         super(NotifyTab, self).__init__()
 
+        # Para o teste do som de notificação
+        self.test_sound = QMediaPlayer()
+
         # Grupos para separar as opções
         messageNotify = QGroupBox(self.tr('Message options'))
         soundNotify = QGroupBox(self.tr('Sound options'))
@@ -327,6 +331,8 @@ class NotifyTab(QWidget):
         self.soundTheme.addItems(listSound())
         self.soundTheme.setCurrentIndex(listSound().index(set_json('SoundTheme')))
         self.soundTheme.currentIndexChanged.connect(lambda: write_json('SoundTheme', self.soundTheme.currentText()))
+        self.testSound = QToolButton(clicked=self.playSound)
+        self.testSound.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
 
         # Verificando se o statusbar está ativo
         if set_json('NotifyMessage'):
@@ -349,9 +355,10 @@ class NotifyTab(QWidget):
 
         # Definindo o layout para opções de som
         soundLayout = QGridLayout()
-        soundLayout.addWidget(self.optionSound, 0, 0, 1, 4)
+        soundLayout.addWidget(self.optionSound, 0, 0, 1, 5)
         soundLayout.addWidget(labelSound, 1, 0)
         soundLayout.addWidget(self.soundTheme, 1, 1)
+        soundLayout.addWidget(self.testSound, 1, 2)
         soundNotify.setLayout(soundLayout)
 
         # Criando o layout
@@ -379,6 +386,12 @@ class NotifyTab(QWidget):
             write_json('NotifySound', True)
         else:
             write_json('NotifySound', False)
+
+
+    # Função para testar o som de notificação selecionado atualmente.
+    def playSound(self):
+        self.test_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
+        self.test_sound.play()
 
 
 ########################################################################################################################
