@@ -24,9 +24,9 @@ echo "#!/bin/bash
 cd /usr/share/$PRGNAM
 
 [ \"\$(grep -E \"nouveau|nvidia\" <(lsmod))\" ] && {
-    LIBGL_ALWAYS_SOFTWARE=1 python3 main.py
+    LIBGL_ALWAYS_SOFTWARE=1 python3 main.py || exit 1
 } || {
-    python3 main.py
+    python3 main.py || exit 1
 }" > "$install_root"/usr/bin/"$PRGNAM"
 
 chmod 755 "$install_root"/usr/bin/"$PRGNAM"

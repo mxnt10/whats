@@ -26,7 +26,8 @@ class AboutDialog(QDialog):
         font.setPointSize(20)
         title.setFont(font)
         logo = QLabel()
-        logo.setPixmap(QPixmap(setIcon('original')))
+        pixmap = QPixmap(setIcon('original'))
+        logo.setPixmap(pixmap.scaled(128, 128))
 
         # Layout com as informações
         layout = QVBoxLayout()

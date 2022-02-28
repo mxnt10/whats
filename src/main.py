@@ -39,7 +39,7 @@ force_open_link = True
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.textUpdate1 = self.textUpdate2 = self.textUpdate3 = self.message1 = self.message2 = self.res = None
+        self.textUpdate1 = self.textUpdate2 = self.textUpdate3 = self.message1 = self.message2 = None
         self.start = self.notify_start = self.reload_start = self.ckUpdate = False
         self.notify = self.changeTray = self.soma = 0
 
