@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Version=1.0
+GenericName=Whats
+Name=Whats
+Comment=Unofficial Whatsapp Desktop
+Exec=whats --system-logon
+Icon=whats
+Terminal=false
+Categories=Network;WebBrowser;
+X-KDE-StartupNotify=false
