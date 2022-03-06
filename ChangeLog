@@ -3,6 +3,31 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 2.6 ] - 2022-03-06 #############################################
+
+### Added / Adicionado
+ - Files and Sources:
+    - Added autostart.desktop in appdata.
+    - Extra sounds notifications.
+ - Code:
+    - Parameter '--system-logon' to system startup.
+###
+
+### Changed / Modificado
+ - No view notifications messages on system startup.
+###
+
+### Fixed / Corrigido
+ - Fixed show window on top.
+###
+
+### Removed / Removido
+ - 4 sounds notifications.
+###
+
+#####################################################################
+
+
 ## [ 2.5 ] - 2022-02-27 #############################################
 
 ### Fixed / Corrigido
@@ -10,12 +35,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
  - Fixed install.sh
 ###
 
+#####################################################################
+
 
 ## [ 2.4 ] - 2022-02-20 #############################################
 
 ### Added / Adicionado
  - Added notification sound themes.
 ###
+
+#####################################################################
 
 
 ## [ 2.3 ] - 2022-02-20 #############################################

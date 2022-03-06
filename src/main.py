@@ -40,8 +40,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.textUpdate1 = self.textUpdate2 = self.textUpdate3 = self.message1 = self.message2 = None
-        self.start = self.notify_start = self.reload_start = self.ckUpdate = False
+        self.start = self.notify_start = self.reload_start = self.ckUpdate = self.sysLogon = False
         self.notify = self.changeTray = self.soma = 0
+
+        # Passagem de parâmetros para o webapp
+        for ag in argv:
+            if ag == '--system-logon':  # Parâmetro para a inicialização durante o login do sistema.
+                self.sysLogon = True
 
         # Pega o tamanho da fonte na primeira inicialização
         if set_json('SizeFont') is None:
@@ -61,6 +66,7 @@ class MainWindow(QMainWindow):
         self.reload.timeout.connect(lambda: self.view.setUrl(QUrl(__url__)))
 
         # Propriedades gerais
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setWindowTitle(__pagename__)
         self.setWindowIcon(QIcon(setIcon()))
         self.setMinimumSize(800, 600)
@@ -163,7 +169,7 @@ class MainWindow(QMainWindow):
     def bs(self, htm, parser):
         res = BeautifulSoup(htm, parser)
         try:
-            if not __err__ in res.title:
+            if not __err__ in res.title and res.findAll('div', {'class': '_26lC3'}):
                 verifyNotify(self, res)
             if __err__ in res.title:  # Em caso de erro de conexão o título inicial não se altera
                 if self.changeTray != 1:
@@ -227,10 +233,6 @@ class MainWindow(QMainWindow):
 
     # Minimizando para o system tray.
     def on_hide(self):
-        # Evitando que o programa minimize ao invés de maximizar ao reabri-lo
-        if self.isMinimized():
-            self.show()
-
         self.hide()
         self.trayMenu.clear()  # Alterando as opções do menu do tray icon
         self.trayMenu.addAction(self.trayShow)

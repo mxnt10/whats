@@ -34,9 +34,13 @@ def verifyNotify(self, res):
         self.soma += int(tag.getText())
     if self.soma != self.notify and self.soma != 0:
         if self.isHidden() or int(self.windowState()) == 1 or int(self.windowState()) == 3:
-            if set_json('NotifySound'):
+
+            # As opções de notificação não funcionarão com o parâmetro '--system-logon'
+            if set_json('NotifySound') and not self.sysLogon:
                 self.notify_sound.setMedia(QMediaContent(QUrl.fromLocalFile(setSound(set_json('SoundTheme')))))
                 self.notify_sound.play()
-            if set_json('NotifyMessage'):
+            if set_json('NotifyMessage') and not self.sysLogon:
                 notifyMessage(self)
+
         self.notify = self.soma  # Necessário para mapear alterações no número de notificações
+    self.sysLogon = False  # Redefinição após a primeira verificação

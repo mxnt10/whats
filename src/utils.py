@@ -48,7 +48,7 @@ def setIcon(entry_icon=None):
 
 # Verifica a existência do arquivo whats.desktop no diretório autostart.
 def setDesktop():
-    orig = '/usr/share/applications/' + __desktop__
+    orig = __dir__ + '/autostart/' + __desktop__
     dest = expanduser('~/.config/autostart')
     desk = dest + '/' + __desktop__
 
