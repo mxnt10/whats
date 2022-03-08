@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 2.7 ] - 2022-03-08 #############################################
+
+### Added / Adicionado
+    - Added Shortcuts.
+###
+
+### Fixed / Corrigido
+ - Fixed notification sounds loop on system logon.
+ - Fixed error parameter name '--system-logon' to '--system-login'.
+###
+
+#####################################################################
+
+
 ## [ 2.6 ] - 2022-03-06 #############################################
 
 ### Added / Adicionado

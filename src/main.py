@@ -93,6 +93,8 @@ class MainWindow(QMainWindow):
         self.shortcut2.activated.connect(app.quit)
         self.shortcut3 = QShortcut(QKeySequence(Qt.AltModifier + Qt.Key_S), self)
         self.shortcut3.activated.connect(self.view.showSettings)
+        self.shortcut4 = QShortcut(QKeySequence(Qt.Key_Backspace), self)
+        self.shortcut4.activated.connect(self.view.back)
 
         # Criando o tray icon
         self.tray = QSystemTrayIcon()
