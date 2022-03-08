@@ -40,13 +40,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.textUpdate1 = self.textUpdate2 = self.textUpdate3 = self.message1 = self.message2 = None
-        self.start = self.notify_start = self.reload_start = self.ckUpdate = self.sysLogon = False
+        self.start = self.notify_start = self.reload_start = self.ckUpdate = self.sysLogin = False
         self.notify = self.changeTray = self.soma = 0
 
         # Passagem de parâmetros para o webapp
         for ag in argv:
-            if ag == '--system-logon':  # Parâmetro para a inicialização durante o login do sistema.
-                self.sysLogon = True
+            if ag == '--system-login':  # Parâmetro para a inicialização durante o login do sistema.
+                self.sysLogin = True
 
         # Pega o tamanho da fonte na primeira inicialização
         if set_json('SizeFont') is None:
