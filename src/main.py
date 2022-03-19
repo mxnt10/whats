@@ -66,7 +66,6 @@ class MainWindow(QMainWindow):
         self.reload.timeout.connect(lambda: self.view.setUrl(QUrl(__url__)))
 
         # Propriedades gerais
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setWindowTitle(__pagename__)
         self.setWindowIcon(QIcon(setIcon()))
         self.setMinimumSize(800, 600)
@@ -233,6 +232,12 @@ class MainWindow(QMainWindow):
             self.ckUpdate = True
 
 
+    # Gambiarra legítima para garantir que a janela vai abrir no topo.
+    def top(self):
+        self.hide()
+        self.show()
+
+
     # Minimizando para o system tray.
     def on_hide(self):
         self.hide()
@@ -253,6 +258,7 @@ class MainWindow(QMainWindow):
             self.show()
             self.setGeometry(self.geometry() - margin)
 
+        QTimer.singleShot(100, self.top)
         self.trayMenu.clear()  # Alterando as opções do menu do tray icon
         self.trayMenu.addAction(self.trayHide)
         self.trayMenu.addAction(self.trayExit)
