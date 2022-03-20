@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
         self.view.font_emit.connect(self.changeFont)
         self.view.opacity_emit.connect(self.changeOpacity)
         self.view.tray_emit.connect(self.changeTrayIcon)
-        self.view.setPage(WhatsApp(self.view))
+        self.view.setPage(WebPage(self.view))
         self.view.page().linkHovered.connect(self.link_hovered)
         self.view.loadFinished.connect(self.loaded)
         self.view.load(QUrl(__url__))
@@ -392,7 +392,7 @@ class Browser(QWebEngineView):
 
 
 # Classe para a página do webapp.
-class WhatsApp(QWebEnginePage):
+class WebPage(QWebEnginePage):
     def __init__(self, *args, **kwargs):
         QWebEnginePage.__init__(self, *args, **kwargs)
         self.profile().defaultProfile().setHttpUserAgent(user_agent)  # Não rola nada sem isso
