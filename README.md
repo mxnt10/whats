@@ -1,10 +1,16 @@
-<h1 align="center">
-    Whats - WhatsApp Desktop
-    <br/><br/>
-    <a><img src="https://raw.githubusercontent.com/mxnt10/whats/master/common/preview.png"></a>
-</h1>
-
-Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
+<html>
+    <body>
+        <h1 align="center">
+            Whats - WhatsApp Desktop
+        </h1><br/>
+        <h3 align="center">
+            Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
+        </h3><br/>
+        <h1 align="center">
+            <a><img src="https://raw.githubusercontent.com/mxnt10/whats/master/common/preview.png"></a>
+        </h1>
+    </body>
+</html>
 
 ### Required packages
 
