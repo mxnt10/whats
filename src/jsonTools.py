@@ -2,9 +2,11 @@
 
 # Módulos importados
 from json import dump, load
-from logging import warning
 from os import makedirs, remove
 from os.path import expanduser, isdir
+
+# Módulos do PyQt5
+from PyQt5.QtCore import qDebug
 
 # Modulos integrados (src)
 from version import __appname__
@@ -40,7 +42,7 @@ def checkSettings():
         with open(j_file):
             pass
     except Exception as msg:
-        warning("\033[33m %s. \033[32mCreate a settings.json ...\033[m", msg)
+        qDebug('\033[31m[DEBUG]\033[33m: ' + str(msg) + '. \033[32mCreate a settings.json...\033[m')
         if not isdir(j_folder):
             makedirs(j_folder)
         with open(j_file, 'w') as jfile:

@@ -5,6 +5,9 @@ from os.path import expanduser, isdir
 from os import chmod, makedirs
 from shutil import rmtree
 
+# Módulos do PyQt5
+from PyQt5.QtCore import qDebug
+
 # Modulos integrados (src)
 from version import __appname__
 
@@ -27,4 +30,4 @@ def prevent():
         makedirs(log_folder)
         chmod(log_folder, 0o444)  # Impedir alteração
     except Exception as msg:
-        print(msg)
+        qDebug('\033[31m[DEBUG]\033[33m: ' + str(msg) + '...\033[m')

@@ -3,7 +3,7 @@ __appname__ = 'Whats'
 
 __pagename__ = __appname__ + ' - WhatsApp Desktop'
 
-__version__ = '3.0'
+__version__ = '3.0.1'
 
 __url__ = 'https://web.whatsapp.com/'
 

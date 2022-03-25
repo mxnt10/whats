@@ -6,18 +6,18 @@
         <h3 align="center">
             Unofficial webapp for WhatsApp Web using python and PyQt5 with PyQtWebEngine.
         </h3>
-        <h1 align="center">
+        <h3 align="center">
             <a><img src="https://raw.githubusercontent.com/mxnt10/whats/master/common/preview.png"></a>
-        </h1>
+        </h3><br/>
     </body>
 </html>
 
-### Required packages
+## Required packages
 
 - python >= 3.6
 - libnotify (notify-send) >= 0.7.9
 
-### Required python modules
+### Python modules:
 
 - beautifulsoup4 >= 4.10.0
 - PyQt5 >= 5.15.2
@@ -25,7 +25,14 @@
 - requests >= 2.25.1
 - soupsieve >= 2.3.1
 
-### Installation instructions
+## Shotcuts
+
+- Ctrl+R: Reload webapp page.
+- Ctrl+Q: Quit application.
+- Alt+S: Open settings.
+- Backspace: Back webapp page.
+
+## Installation instructions
 
 To install "Whats", use the following commands:
 ```sh
@@ -35,7 +42,7 @@ $ cd whats
 $ sudo ./install.sh
 ```
 
-### GNU General Public License
+## GNU General Public License
 
 This repository has scripts that were created to be free software.<br/>
 Therefore, they can be distributed and/or modified within the terms of the *GNU General Public License*.
@@ -44,12 +51,12 @@ Therefore, they can be distributed and/or modified within the terms of the *GNU 
 >
 >Free Software Foundation (FSF) Inc. 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-### Comments
+## Comments
 
 In case of bugs, problems of execution or construction of packages, constructive criticism, among others,
 please submit a message to one of the contacts below.
 
-### Contact
+## Contact
 
 Maintainer: Mauricio Ferrari<br/>
 E-Mail: *m10ferrari1200@gmail.com*<br/>

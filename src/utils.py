@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # Módulos importados
-from logging import warning, error
 from os import remove, walk
 from os.path import expanduser, isfile, realpath, isdir
 from subprocess import run
@@ -10,7 +9,7 @@ from soupsieve.util import lower
 from shutil import copy
 
 # Módulos do Qt5
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, qDebug
 from PyQt5.QtMultimedia import QMediaContent
 
 # Modulos integrados (src)
@@ -36,13 +35,13 @@ def setIcon(entry_icon=None):
         with open(icon):
             return icon
     except Exception as msg:
-        warning('\033[33m %s.\033[32m Use a local icon...\033[m', msg)
+        qDebug('\033[31m[DEBUG]\033[33m: ' + str(msg) + '. \033[32mUse a local icon...\033[m')
         try:
             with open(l_icon):
                 return l_icon
-        except Exception as msg:
+        except Exception as err:
             # Caso nenhum ícone seja encontrado, vai sem ícone mesmo
-            error('\033[31m %s \033[m', msg)
+            qDebug('\033[31m[DEBUG]:' + str(err) + '.\033[m')
             return None
 
 
@@ -60,8 +59,8 @@ def setDesktop():
             remove(desk)
         return True
 
-    except Exception as msg:  # Se o arquivo não existe, não tem porque ativar a opção autostart
-        error('\033[31m %s \033[m', msg)
+    except Exception as err:  # Se o arquivo não existe, não tem porque ativar a opção autostart
+        qDebug('\033[31m[DEBUG]:' + str(err) + '.\033[m')
         write_json('AutoStart', False)
         return False
 
@@ -76,12 +75,12 @@ def setSound(sound):
             with open(dirSound + ext):
                 return dirSound + ext  # Esse aqui não precisa realpath, pois é caminho absoluto
         except Exception as msg:
-            warning('\033[33m %s.\033[32m Use a local sound folder...\033[m', msg)
+            qDebug('\033[31m[DEBUG]\033[33m: ' + str(msg) + '. \033[32mUse a local sound folder...\033[m')
             try:
                 with open(l_dirSound + ext):
                     return l_dirSound + ext
             except Exception as msg:
-                warning('\033[33m %s.\033[32m Use a other option...\033[m', msg)
+                qDebug('\033[31m[DEBUG]\033[33m: ' + str(msg) + '. \033[32mUse a other option...\033[m')
 
 
 # Cria uma lista com as opções de temas de som.
@@ -103,7 +102,7 @@ def setTranslate():
     if not isdir(dirTranslate):
         dirTranslate = __dir__ + '/translate'
     else:
-        warning('\033[32m Using a local translate folder...\033[m')
+        qDebug('\033[31m[DEBUG]\033[32m: Using a local translate folder...\033[m')
     return dirTranslate
 
 
@@ -118,7 +117,7 @@ def checkUpdate(self, num):
         if res.status_code != 200:
             raise ValueError('Connection fail, ' + str(res.status_code))
 
-        new_ver = res.text.split("\n")
+        new_ver = res.text.split('\n')
         if new_ver[0] != str(__version__):
             com = 'notify-send --app-name="' + __appname__ + ' - ' + self.textUpdate1 + '" --expire-time=' +\
                   str(set_json('TimeMessage')) + ' "' + self.textUpdate2 + '.\n' + self.textUpdate3 +\
@@ -128,4 +127,4 @@ def checkUpdate(self, num):
             self.notify_sound.play()
 
     except ValueError as msg:
-        error("\033[33m Update check failed.\033[31m %s \033[m", msg)
+        qDebug('\033[31m[DEBUG]\033[33m: Update check failed. \033[31m' + str(msg) + '.\033[m')
