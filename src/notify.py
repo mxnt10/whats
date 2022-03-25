@@ -4,10 +4,11 @@
 from os.path import realpath
 from subprocess import run
 
-# Modulos integrados (src)
-from PyQt5.QtCore import QUrl
+# Módulos do PyQt5
+from PyQt5.QtCore import QUrl, qDebug
 from PyQt5.QtMultimedia import QMediaContent
 
+# Modulos integrados (src)
 from jsonTools import set_json
 from utils import setIcon, setSound
 from version import __pagename__
@@ -43,7 +44,7 @@ def verifyNotify(self, res):
                     self.notify_sound.play()
                 if set_json('NotifyMessage') and not self.sysLogin:
                     notifyMessage(self)
-            except Exception:
-                pass
+            except Exception as err:
+                qDebug('\033[31m[DEBUG]\033[33m: ' + str(err) + '.\033[m')
 
     self.sysLogin = False  # Redefinição após a primeira verificação
